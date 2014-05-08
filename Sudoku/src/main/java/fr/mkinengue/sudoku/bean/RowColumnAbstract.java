@@ -1,6 +1,3 @@
-/**
- * 
- */
 package fr.mkinengue.sudoku.bean;
 
 import fr.mkinengue.sudoku.exception.SudokuException;
