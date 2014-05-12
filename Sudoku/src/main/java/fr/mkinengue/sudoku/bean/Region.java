@@ -6,14 +6,15 @@ import java.util.List;
 import java.util.Map;
 
 import fr.mkinengue.sudoku.exception.NotValidException;
+import fr.mkinengue.sudoku.exception.SudokuException;
 
 /**
- * Implémentation d'une région de la grille de SUdoku. Une région est un mini carré constitué d'autant de cases qu'une
+ * Implémentation d'une région de la grille de Sudoku. Une région est un mini carré constitué d'autant de cases qu'une
  * ligne de la grille. De plus, les index de ligne et colonne des cases de la région sont liés par une formule
  */
 public class Region {
 
-	private final Case[] region;
+	private final List<Case> region;
 
 	private final int size;
 
@@ -28,14 +29,15 @@ public class Region {
 	private Map<Integer, List<Case>> caseByColumn;
 
 	/**
-	 * Constraucteur
+	 * Constructeur initialisant une région avec la taille donnée par le premier paramètre et comme première case de la
+	 * région celle donnée par le second paramètre
 	 * 
 	 * @param size
 	 * @param firstCase
 	 */
 	public Region(final int size, final Case firstCase) {
 		this.size = size;
-		region = new Case[size];
+		region = new ArrayList<Case>(size);
 		completed = false;
 		validated = false;
 		caseByRow = null;
@@ -44,73 +46,69 @@ public class Region {
 	}
 
 	/**
-	 * @return
+	 * Retourne la taille de la région, le nombre de cases contenus dans la région
+	 * 
+	 * @return int
 	 */
 	public final int getSize() {
 		return size;
 	}
 
 	/**
+	 * Retourne la liste des cases formant la région
 	 * 
-	 * @return
+	 * @return Case[]
 	 */
 	public final Case[] getCases() {
-		return region;
+		return (Case[]) region.toArray();
 	}
 
 	/**
-	 * Ajoute la case à la région
+	 * Ajoute la case
 	 * 
 	 * @param c
-	 * @return
 	 */
-	public boolean addCase(final Case c) {
-		for (int i = 0; i < size; i++) {
-			if (region[i] == null) {
-				region[i] = c;
-				return true;
-			}
+	public void addCase(Case c) {
+		if (!contains(c)) {
+			region.add(c);
 		}
-		return false;
 	}
 
 	/**
 	 * Vérifie si la région est complète ou non
 	 * 
-	 * @return
+	 * @return true / false
 	 */
 	public boolean isComplete() {
 		if (!completed) {
-			boolean tmp = true;
-			for (int i = 0; i < size; i++) {
-				tmp = tmp && (region[i] != null);
-			}
-			completed = tmp;
+			completed = region.size() == size;
 		}
 		return completed;
 	}
 
 	/**
-	 * Vérifie si la région est valide ou non<br />
+	 * Vérifie si la région est valide ou non en faisant la différence ligne à ligne et colonne à colonne de toutes les
+	 * cases deux à deux en s'assurant que le carré du résultat est toujours strictement inférieure au nombre de cases
+	 * contenues dans la région<br />
 	 * Lève une exception quand ce n'est pas le cas
 	 * 
-	 * @return
+	 * @return true / false
 	 */
 	public boolean isValid() {
 		if (isComplete() && !validated) {
 			for (int i = 0; i < size - 1; i++) {
 				for (int j = i + 1; j < size; j++) {
-					final int rowI = region[i].getRow();
-					final int colI = region[i].getColumn();
-					final int rowJ = region[j].getRow();
-					final int colJ = region[j].getColumn();
+					final int rowI = region.get(i).getRow();
+					final int colI = region.get(i).getColumn();
+					final int rowJ = region.get(j).getRow();
+					final int colJ = region.get(j).getColumn();
 					if (Math.pow(rowI - rowJ, 2) >= size) {
-						throw new NotValidException("La différence des lignes des cases " + region[i] + " et "
-								+ region[j] + " est supérieure à " + size);
+						throw new NotValidException("Le carré de la différence des lignes des cases " + region.get(i)
+										+ " et " + region.get(j) + " est supérieure à " + size);
 					}
-					if (Math.abs(colI - colJ) >= size) {
-						throw new NotValidException("La différence des lignes des cases " + region[i] + " et "
-								+ region[j] + " est supérieure à " + size);
+					if (Math.pow(colI - colJ, 2) >= size) {
+						throw new NotValidException("Le carré de la différence des lignes des cases " + region.get(i)
+										+ " et " + region.get(j) + " est supérieure à " + size);
 					}
 				}
 			}
@@ -119,72 +117,103 @@ public class Region {
 		return validated;
 	}
 
-	private void initCasesByRow() {
+	/**
+	 * Met à jour la Map des cases de la région par ligne
+	 */
+	private void updateCaseByRow() {
 		if (caseByRow == null) {
-			// if (!completed) {
-			// throw new NotCompletedException("La région courante n'est pas complète");
-			// } else if (!validated) {
-			// throw new NotValidException("La région courante n'est pas valide");
-			// } else {
 			caseByRow = new HashMap<Integer, List<Case>>();
-			for (int i = 0; i < size; i++) {
-				if (caseByRow.get(region[i].getRow()) == null) {
-					caseByRow.put(region[i].getRow(), new ArrayList<Case>());
-				}
-				caseByRow.get(region[i].getRow()).add(region[i]);
+		}
+		for (final Case c : region) {
+			if (caseByRow.get(c.getRow()) == null) {
+				caseByRow.put(c.getRow(), new ArrayList<Case>());
 			}
-			// }
+			if (!caseByRow.get(c.getRow()).contains(c)) {
+				caseByRow.get(c.getRow()).add(c);
+			}
 		}
 	}
 
-	private void initCasesByColumn() {
+	/**
+	 * Met à jour la Map des cases de la région par colonne
+	 */
+	private void updateCasesByColumn() {
 		if (caseByColumn == null) {
-			// if (!completed) {
-			// throw new NotCompletedException("La région courante n'est pas complète");
-			// } else if (!validated) {
-			// throw new NotValidException("La région courante n'est pas valide");
-			// } else {
 			caseByColumn = new HashMap<Integer, List<Case>>();
-			for (int i = 0; i < size; i++) {
-				System.out.println(region[i]);
-				if (caseByColumn.get(region[i].getColumn()) == null) {
-					caseByColumn.put(region[i].getColumn(), new ArrayList<Case>());
-				}
-				caseByColumn.get(region[i].getColumn()).add(region[i]);
+		}
+		for (final Case c : region) {
+			if (caseByColumn.get(c.getColumn()) == null) {
+				caseByColumn.put(c.getColumn(), new ArrayList<Case>());
 			}
-			// }
+			if (!caseByColumn.get(c.getColumn()).contains(c)) {
+				caseByColumn.get(c.getColumn()).add(c);
+			}
 		}
 	}
 
+	/**
+	 * Retourne la liste des cases appartenant à la ligne row de la région courante<br />
+	 * Retourne null si la ligne n'existe pas dans la région courante
+	 * 
+	 * @param row
+	 * @return List&lt;Case&gt;
+	 */
 	public List<Case> getCasesByRow(final int row) {
-		if (caseByRow == null) {
-			initCasesByRow();
-		}
+		updateCaseByRow();
 		return caseByRow.get(row);
 	}
 
+	/**
+	 * Retourne la liste des cases appartenant à la colonne column de la région courante<br />
+	 * Retourne null si la colonne n'existe pas dans la région courante
+	 * 
+	 * @param row
+	 * @return List&lt;Case&gt;
+	 */
 	public List<Case> getCasesByColumn(final int column) {
-		if (caseByColumn == null) {
-			initCasesByColumn();
-		}
+		updateCasesByColumn();
 		return caseByColumn.get(column);
 	}
 
+	/**
+	 * Retourne true si la région courante contient la case en paramètre
+	 * 
+	 * @param c
+	 * @return true / false
+	 */
 	public boolean contains(final Case c) {
+		if (c == null) {
+			throw new SudokuException("La case fournie en paramètre est nulle");
+		}
 		final List<Case> listCases = getCasesByRow(c.getRow());
-		return listCases.contains(c);
+		return listCases != null && listCases.contains(c);
 	}
 
+	/**
+	 * Retourne la liste des index de ligne contenant la région
+	 * 
+	 * @return List&lt;Integer&gt;
+	 */
 	public List<Integer> getRows() {
-		initCasesByRow();
+		updateCaseByRow();
 		return new ArrayList<Integer>(caseByRow.keySet());
 	}
 
+	/**
+	 * Retourne la liste des index de colonne contenant la région
+	 * 
+	 * @return List&lt;Integer&gt;
+	 */
 	public List<Integer> getColumns() {
-		initCasesByColumn();
+		updateCasesByColumn();
 		return new ArrayList<Integer>(caseByColumn.keySet());
 	}
 
+	/**
+	 * Retourne la première case de la région
+	 * 
+	 * @return Case
+	 */
 	public Case getFirstCase() {
 		return firstCase;
 	}
@@ -199,7 +228,7 @@ public class Region {
 			if (toPrint.length() != 0) {
 				toPrint.append(" - ");
 			}
-			toPrint.append(region[i]);
+			toPrint.append(region.get(i));
 		}
 		return toPrint.toString();
 	}

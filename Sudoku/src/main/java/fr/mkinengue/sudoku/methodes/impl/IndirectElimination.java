@@ -48,7 +48,7 @@ public class IndirectElimination extends MethodeAbstract implements Methode {
 	 */
 	private void executeRowColumnCuttingRegionElimination() {
 		final int size = getSudoku().getGrille().length;
-		final Collection<Region> regions = getSudoku().getMapRegionsByFirstCase().values();
+		final Collection<Region> regions = getSudoku().getRegionsByFirstCase().values();
 		for (Integer candidat = 1; candidat <= size; candidat++) {
 			for (final Region region : regions) {
 				final List<Integer> rowsIdx = region.getRows();
@@ -152,7 +152,7 @@ public class IndirectElimination extends MethodeAbstract implements Methode {
 	 */
 	private void executeRegionCuttingRowColumnElimination() {
 		final int size = getSudoku().getGrille().length;
-		final Collection<Region> regions = getSudoku().getMapRegionsByFirstCase().values();
+		final Collection<Region> regions = getSudoku().getRegionsByFirstCase().values();
 		for (int candidat = 1; candidat <= size; candidat++) {
 			for (final Region region : regions) {
 				final List<Integer> rows = region.getRows();

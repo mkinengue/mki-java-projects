@@ -61,7 +61,7 @@ public class Singleton extends MethodeAbstract implements Methode {
 	 * Mets � jour l'unique case si elle existe pour chacune des r�gions de la grille
 	 */
 	private void setSingletonFromRegions() {
-		final Map<Case, Region> regionsByFirstCase = getSudoku().getMapRegionsByFirstCase();
+		final Map<Case, Region> regionsByFirstCase = getSudoku().getRegionsByFirstCase();
 		for (final Region region : regionsByFirstCase.values()) {
 			final Case[] regionCases = region.getCases();
 			setSingleton(regionCases);

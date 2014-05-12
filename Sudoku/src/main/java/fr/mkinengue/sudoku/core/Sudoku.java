@@ -13,6 +13,7 @@ import fr.mkinengue.sudoku.bean.Case;
 import fr.mkinengue.sudoku.bean.Column;
 import fr.mkinengue.sudoku.bean.Region;
 import fr.mkinengue.sudoku.bean.Row;
+import fr.mkinengue.sudoku.exception.InvalidRegionException;
 import fr.mkinengue.sudoku.exception.InvalidRowException;
 import fr.mkinengue.sudoku.exception.NotValidException;
 import fr.mkinengue.sudoku.exception.SudokuException;
@@ -123,8 +124,8 @@ public class Sudoku {
 					emptyCases.add(this.grille[i][j]);
 				} else if (grille[i][j] <= 0 || grille[i][j] > size) {
 					throw new SudokuException("La case (" + i + "," + j
-							+ ") ne peut pas contenir une valeur négative ou plus grande strictement que " + size
-							+ ". Valeur contenue : " + grille[i][j]);
+									+ ") ne peut pas contenir une valeur négative ou plus grande strictement que "
+									+ size + ". Valeur contenue : " + grille[i][j]);
 				}
 			}
 		}
@@ -167,7 +168,7 @@ public class Sudoku {
 				}
 			} catch (final Exception e) {
 				throw new SudokuException(
-						"Une exception a été levée en essayant de charger les méthodes de résolution", e);
+								"Une exception a été levée en essayant de charger les méthodes de résolution", e);
 			}
 		}
 		LOG.log(Level.INFO, "Fin exécution initialisation des méthodes en {0} ms", System.currentTimeMillis() - debut);
@@ -278,7 +279,7 @@ public class Sudoku {
 		final Region regionValuated = regionsByCase.get(newlyValuatedCase);
 		if (regionValuated == null) {
 			LOG.warning("Attention : la région de la case nouvellement valuée (" + newlyValuatedCase
-					+ ") n'a pas été trouvée => pas de mise à jour de la liste de priorité des régions.");
+							+ ") n'a pas été trouvée => pas de mise à jour de la liste de priorité des régions.");
 			return;
 		}
 		// On cherche maintenant la première case de la région
@@ -359,15 +360,22 @@ public class Sudoku {
 		for (int i = 0; i < size; i++) {
 			if (!SudokuUtils.verifyCases(getCasesByRow(i))) {
 				throw new InvalidRowException("La ligne numéro [" + (i + 1)
-						+ "] a au moins deux cases ayant la même valeur");
+								+ "] a au moins deux cases ayant la même valeur");
 			}
 			if (!SudokuUtils.verifyCases(getCasesByColumn(i))) {
 				throw new InvalidRowException("La colonne numéro [" + (i + 1)
-						+ "] a au moins deux cases ayant la même valeur");
+								+ "] a au moins deux cases ayant la même valeur");
 			}
 		}
 
-		// TODO Vérifier par région
+		// Vérifier par région
+		final Map<Case, Region> mapRegionsByFirstCase = getRegionsByFirstCase();
+		for (final Region reg : mapRegionsByFirstCase.values()) {
+			if (!SudokuUtils.verifyCases(reg.getCases())) {
+				throw new InvalidRegionException("La région de la case [" + reg.getFirstCase()
+								+ "] a au moins deux cases ayant la même valeur");
+			}
+		}
 		return true;
 	}
 
@@ -386,13 +394,8 @@ public class Sudoku {
 	}
 
 	/**
-	 * @return the regionsByFirstCase
-	 */
-	public Map<Case, Region> getRegionsByFirstCase() {
-		return regionsByFirstCase;
-	}
-
-	/**
+	 * Retourne la map associant pour chaque case de la grille la région à laquelle elle appartient.
+	 * 
 	 * @return the regionsByCase
 	 */
 	public Map<Case, Region> getRegionsByCase() {
@@ -440,14 +443,14 @@ public class Sudoku {
 		for (final Case fstCaseReg : regionsByFirstCase.keySet()) {
 			final float diffRowFst = (float) Math.floor((float) (Math.abs(fstCaseReg.getRow()) * 1.0 / sizeQuared));
 			final float diffColFst = (float) Math.floor((float) (Math.abs(fstCaseReg.getColumn()) * 1.0 / sizeQuared));
-			if ((diffRowC == diffRowFst) && (diffColC == diffColFst)) {
+			if (diffRowC == diffRowFst && diffColC == diffColFst) {
 				final Region region = regionsByFirstCase.get(fstCaseReg);
 				regionsByCase.put(c, region);
 				return region;
 			}
 		}
 		throw new SudokuException("La case " + c
-				+ " n'appartient à aucune région. Régions connues par première case : " + regionsByFirstCase);
+						+ " n'appartient à aucune région. Régions connues par première case : " + regionsByFirstCase);
 	}
 
 	/**
@@ -456,7 +459,7 @@ public class Sudoku {
 	 * 
 	 * @return
 	 */
-	public Map<Case, Region> getMapRegionsByFirstCase() {
+	public Map<Case, Region> getRegionsByFirstCase() {
 		return regionsByFirstCase;
 	}
 
@@ -504,7 +507,7 @@ public class Sudoku {
 		// Affichage des numéros de colonne
 		strB.append(PREFIX_ROW_NUMBER_VALUE);
 		for (int j = 0; j < size; j++) {
-			if (j > 0 && (j % ((int) Math.sqrt(size)) == 0)) {
+			if (j > 0 && j % (int) Math.sqrt(size) == 0) {
 				strB.append(" ");
 			}
 			strB.append("  ");
@@ -523,7 +526,7 @@ public class Sudoku {
 			}
 			strB.append("-");
 			strB.append("\n");
-			if (i != size && i > 1 && (i % ((int) Math.sqrt(size)) == 0)) {
+			if (i != size && i > 1 && i % (int) Math.sqrt(size) == 0) {
 				// On double les barres horizontales pour séparer les régions
 				strB.append(PREFIX_ROW_NUMBER_VALUE);
 				for (int j = 0; j <= size; j++) {
@@ -543,7 +546,7 @@ public class Sudoku {
 					strBTmp.append(i).append(" : ");
 				}
 				strBTmp.append("|");
-				if (j != size && j > 1 && (j % ((int) Math.sqrt(size)) == 0)) {
+				if (j != size && j > 1 && j % (int) Math.sqrt(size) == 0) {
 					// On double les barres verticales pour séparer les régions
 					strBTmp.append("|");
 				}
@@ -574,11 +577,13 @@ public class Sudoku {
 	 */
 	public static void main(final String[] args) {
 		final Integer[][] grille = { { null, null, null, null, 6, null, null, 8, 9 },
-				{ null, 7, 2, 5, null, null, null, null, 3 }, { null, null, null, null, null, 8, null, null, null },
-				{ null, null, null, null, null, 5, null, null, null },
-				{ null, 3, 1, null, null, null, null, null, null }, { 6, null, null, null, null, null, 8, 2, null },
-				{ 9, null, null, null, null, 6, 7, null, null }, { null, 4, null, 1, null, null, null, 6, 8 },
-				{ 3, null, null, null, 2, null, 5, null, null } };
+						{ null, 7, 2, 5, null, null, null, null, 3 },
+						{ null, null, null, null, null, 8, null, null, null },
+						{ null, null, null, null, null, 5, null, null, null },
+						{ null, 3, 1, null, null, null, null, null, null },
+						{ 6, null, null, null, null, null, 8, 2, null },
+						{ 9, null, null, null, null, 6, 7, null, null }, { null, 4, null, 1, null, null, null, 6, 8 },
+						{ 3, null, null, null, 2, null, 5, null, null } };
 		final Sudoku sudoku = new Sudoku(grille);
 		System.out.println(sudoku);
 		System.out.println(sudoku.isFull());

@@ -41,25 +41,46 @@ public class Case {
 		}
 	}
 
+	/**
+	 * Retourne le numéro de la ligne à laquelle appartient la case
+	 * @return int
+	 */
 	public int getRow() {
 		return row;
 	}
 
+	/**
+	 * Retourne le numéro de la colonne à laquelle appartient la case
+	 * @return int
+	 */
 	public int getColumn() {
 		return column;
 	}
 
+	/**
+	 * Retourne le nombre maximum que peut contenir la case du Sudoku courant
+	 * @return int
+	 */
 	public int getMaxValue() {
 		return maxValue;
 	}
 
+	/**
+	 * Retourne le nombre contenu dans la case. Retourne null si la case est vide
+	 * @return Integer ou Null
+	 */
 	public Integer getValue() {
 		return value;
 	}
 
+	/**
+	 * Valorise la case avec le nombre "value" en paramètre si celui-ci est un nombre dans la plage attendue.<br />
+	 * En cas de valorisation, la liste des candidats possibles pour la case courante est vidée  
+	 * @param value
+	 */
 	public void setValue(final int value) {
-		this.value = Integer.valueOf(value);
 		if (value > 0 && value <= maxValue) {
+			this.value = value;
 			candidates.clear();
 		}
 	}
@@ -79,8 +100,8 @@ public class Case {
 	 * @param candidate
 	 * @return true / false
 	 */
-	public boolean removeCandidate(final Integer candidate) {
-		return candidates.remove(candidate);
+	public boolean removeCandidate(final int candidate) {
+		return candidates.remove(Integer.valueOf(candidate));
 	}
 
 	/**

@@ -222,7 +222,7 @@ public class NakedGroup extends MethodeAbstract implements Methode {
 	 */
 	private void executePairForRegions(final int candidat1, final int candidat2) {
 		LogUtils.logEnteringMethod(LOG, Level.INFO, getClass().getSimpleName(), "executePairForRegions");
-		for (final Region region : getSudoku().getMapRegionsByFirstCase().values()) {
+		for (final Region region : getSudoku().getRegionsByFirstCase().values()) {
 			final List<Case> casesRegion = lookForPaireCandidatesRegion(candidat1, candidat2, region);
 			if (!casesRegion.isEmpty()) {
 				for (final Case cRegion : region.getCases()) {
@@ -246,7 +246,7 @@ public class NakedGroup extends MethodeAbstract implements Methode {
 	 */
 	private void executeTripletForRegions(final int candidat1, final int candidat2, final int candidat3) {
 		LogUtils.logEnteringMethod(LOG, Level.INFO, getClass().getSimpleName(), "executeTripletForRegions");
-		for (final Region region : getSudoku().getMapRegionsByFirstCase().values()) {
+		for (final Region region : getSudoku().getRegionsByFirstCase().values()) {
 			final List<Case> casesRegion = lookForTripletCandidatesRegion(candidat1, candidat2, candidat3, region);
 			if (!casesRegion.isEmpty()) {
 				for (final Case cRegion : region.getCases()) {
@@ -273,7 +273,7 @@ public class NakedGroup extends MethodeAbstract implements Methode {
 	private void executeQuadrupletForRegions(final int candidat1, final int candidat2, final int candidat3,
 			final int candidat4) {
 		LogUtils.logEnteringMethod(LOG, Level.INFO, getClass().getSimpleName(), "executeQuadrupletForRegions");
-		for (final Region region : getSudoku().getMapRegionsByFirstCase().values()) {
+		for (final Region region : getSudoku().getRegionsByFirstCase().values()) {
 			final List<Case> casesRegion = lookForQuadrupletCandidatesRegion(candidat1, candidat2, candidat3,
 					candidat4, region);
 			if (!casesRegion.isEmpty()) {
