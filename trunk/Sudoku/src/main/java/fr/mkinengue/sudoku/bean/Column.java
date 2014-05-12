@@ -1,6 +1,3 @@
-/**
- * 
- */
 package fr.mkinengue.sudoku.bean;
 
 /**
@@ -9,14 +6,11 @@ package fr.mkinengue.sudoku.bean;
  */
 public class Column extends RowColumnAbstract {
 
-	private final boolean isColumn;
-
 	/**
 	 * {@inheritDoc}
 	 */
 	public Column(final Case[] columnParam, final int indexParam) {
 		super(columnParam, indexParam);
-		isColumn = true;
 	}
 
 	/**
@@ -24,7 +18,6 @@ public class Column extends RowColumnAbstract {
 	 */
 	public Column(final int size, final int indexParam) {
 		super(size, indexParam);
-		isColumn = true;
 	}
 
 	/**
@@ -40,7 +33,7 @@ public class Column extends RowColumnAbstract {
 	 */
 	@Override
 	protected boolean isColumnType() {
-		return isColumn;
+		return true;
 	}
 
 	/**

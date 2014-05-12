@@ -55,7 +55,7 @@ public class SingletonCache extends MethodeAbstract implements Methode {
 
 	private void setUniqueCaseForRegions() {
 		final int maxNb = getSudoku().getGrille().length;
-		final Map<Case, Region> regionsByFirstCase = getSudoku().getMapRegionsByFirstCase();
+		final Map<Case, Region> regionsByFirstCase = getSudoku().getRegionsByFirstCase();
 		for (int possible = 1; possible <= maxNb; possible++) {
 			for (final Region region : regionsByFirstCase.values()) {
 				setUniqueCaseWithPossibility(possible, region.getCases());
@@ -67,8 +67,10 @@ public class SingletonCache extends MethodeAbstract implements Methode {
 	 * Valorise si elle existe l'unique case contenant la possiblit� possible, pour toutes les cases de cases<br />
 	 * Ne fait rien si la case n'est pas trouv�e ou si plusieurs cases poss�dent cette possibilit�
 	 * 
-	 * @param candidat candidat � chercher
-	 * @param cases cases parmi lesquelles cherch�es
+	 * @param candidat
+	 *            candidat � chercher
+	 * @param cases
+	 *            cases parmi lesquelles cherch�es
 	 */
 	private void setUniqueCaseWithPossibility(final int candidat, final Case[] cases) {
 		Case c = null;

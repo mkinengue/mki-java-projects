@@ -10,8 +10,6 @@ import junit.framework.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
-import fr.mkinengue.sudoku.bean.Case;
-import fr.mkinengue.sudoku.bean.Region;
 import fr.mkinengue.sudoku.exception.NotValidException;
 
 /**
@@ -51,7 +49,8 @@ public class RegionTest {
 	/**
 	 * Construit la région en ajoutant les cases correspondantes
 	 * 
-	 * @param Region reg : région
+	 * @param Region
+	 *            reg : région
 	 */
 	private void buildRegion(final Region reg) {
 		reg.addCase(Constantes.CASE_30);
@@ -78,41 +77,41 @@ public class RegionTest {
 		}
 	}
 
-	/**
-	 * @see Region#addCase(Case)
-	 */
-	@Test
-	public void testAddCase() {
-		final Region reg = new Region(Constantes.SIZE, Constantes.CASE_30);
-		Assert.assertNotNull(reg);
-		for (final Case c : reg.getCases()) {
-			Assert.assertNull(c);
-		}
-
-		Assert.assertTrue(reg.addCase(Constantes.CASE_30));
-		for (final Case c : reg.getCases()) {
-			if (c != null) {
-				Assert.assertEquals(Constantes.CASE_30, c);
-				continue;
-			}
-			Assert.assertNull(c);
-		}
-
-		Assert.assertTrue(reg.addCase(Constantes.CASE_41));
-		int nbMatches = 0;
-		for (final Case c : reg.getCases()) {
-			if (c != null) {
-				Assert.assertTrue(Constantes.CASE_30.equals(c) || Constantes.CASE_41.equals(c));
-				nbMatches++;
-				continue;
-			}
-			Assert.assertNull(c);
-		}
-		Assert.assertEquals(2, nbMatches);
-
-		// Ajout impossible dans une région pleine
-		Assert.assertFalse(region.addCase(Constantes.CASE_30));
-	}
+	// /**
+	// * @see Region#addCase(Case)
+	// */
+	// @Test
+	// public void testAddCase() {
+	// final Region reg = new Region(Constantes.SIZE, Constantes.CASE_30);
+	// Assert.assertNotNull(reg);
+	// for (final Case c : reg.getCases()) {
+	// Assert.assertNull(c);
+	// }
+	//
+	// Assert.assertTrue(reg.addCase(Constantes.CASE_30));
+	// for (final Case c : reg.getCases()) {
+	// if (c != null) {
+	// Assert.assertEquals(Constantes.CASE_30, c);
+	// continue;
+	// }
+	// Assert.assertNull(c);
+	// }
+	//
+	// Assert.assertTrue(reg.addCase(Constantes.CASE_41));
+	// int nbMatches = 0;
+	// for (final Case c : reg.getCases()) {
+	// if (c != null) {
+	// Assert.assertTrue(Constantes.CASE_30.equals(c) || Constantes.CASE_41.equals(c));
+	// nbMatches++;
+	// continue;
+	// }
+	// Assert.assertNull(c);
+	// }
+	// Assert.assertEquals(2, nbMatches);
+	//
+	// // Ajout impossible dans une région pleine
+	// Assert.assertFalse(region.addCase(Constantes.CASE_30));
+	// }
 
 	/**
 	 * @see Region#contains(Case)
@@ -143,7 +142,7 @@ public class RegionTest {
 		int nbMatches = 0;
 		for (final Case c : cases0) {
 			Assert.assertTrue(Constantes.CASE_30.equals(c) || Constantes.CASE_31.equals(c)
-					|| Constantes.CASE_32.equals(c));
+							|| Constantes.CASE_32.equals(c));
 			nbMatches++;
 		}
 		Assert.assertEquals(3, nbMatches);
@@ -152,7 +151,7 @@ public class RegionTest {
 		nbMatches = 0;
 		for (final Case c : cases1) {
 			Assert.assertTrue(Constantes.CASE_40.equals(c) || Constantes.CASE_41.equals(c)
-					|| Constantes.CASE_42.equals(c));
+							|| Constantes.CASE_42.equals(c));
 			nbMatches++;
 		}
 		Assert.assertEquals(3, nbMatches);
@@ -161,7 +160,7 @@ public class RegionTest {
 		nbMatches = 0;
 		for (final Case c : cases2) {
 			Assert.assertTrue(Constantes.CASE_50.equals(c) || Constantes.CASE_51.equals(c)
-					|| Constantes.CASE_52.equals(c));
+							|| Constantes.CASE_52.equals(c));
 			nbMatches++;
 		}
 		Assert.assertEquals(3, nbMatches);
@@ -176,7 +175,7 @@ public class RegionTest {
 		int nbMatches = 0;
 		for (final Case c : cases0) {
 			Assert.assertTrue(Constantes.CASE_30.equals(c) || Constantes.CASE_40.equals(c)
-					|| Constantes.CASE_50.equals(c));
+							|| Constantes.CASE_50.equals(c));
 			nbMatches++;
 		}
 		Assert.assertEquals(3, nbMatches);
@@ -185,7 +184,7 @@ public class RegionTest {
 		nbMatches = 0;
 		for (final Case c : cases1) {
 			Assert.assertTrue(Constantes.CASE_31.equals(c) || Constantes.CASE_41.equals(c)
-					|| Constantes.CASE_51.equals(c));
+							|| Constantes.CASE_51.equals(c));
 			nbMatches++;
 		}
 		Assert.assertEquals(3, nbMatches);
@@ -194,7 +193,7 @@ public class RegionTest {
 		nbMatches = 0;
 		for (final Case c : cases2) {
 			Assert.assertTrue(Constantes.CASE_32.equals(c) || Constantes.CASE_42.equals(c)
-					|| Constantes.CASE_52.equals(c));
+							|| Constantes.CASE_52.equals(c));
 			nbMatches++;
 		}
 		Assert.assertEquals(3, nbMatches);
@@ -208,7 +207,7 @@ public class RegionTest {
 		final List<Integer> columns = region.getColumns();
 		int nbMatches = 0;
 		for (final Integer idxCol : columns) {
-			Assert.assertTrue((idxCol.intValue() == 0) || (idxCol.intValue() == 1) || (idxCol.intValue() == 2));
+			Assert.assertTrue(idxCol.intValue() == 0 || idxCol.intValue() == 1 || idxCol.intValue() == 2);
 			nbMatches++;
 		}
 		Assert.assertEquals(3, nbMatches);
@@ -222,7 +221,7 @@ public class RegionTest {
 		final List<Integer> rows = region.getRows();
 		int nbMatches = 0;
 		for (final Integer idxRow : rows) {
-			Assert.assertTrue((idxRow.intValue() == 3) || (idxRow.intValue() == 4) || (idxRow.intValue() == 5));
+			Assert.assertTrue(idxRow.intValue() == 3 || idxRow.intValue() == 4 || idxRow.intValue() == 5);
 			nbMatches++;
 		}
 		Assert.assertEquals(3, nbMatches);
@@ -267,15 +266,15 @@ public class RegionTest {
 		Assert.assertTrue(region.isValid());
 
 		final Region reg = new Region(Constantes.SIZE, Constantes.CASE_30);
-		Assert.assertTrue(reg.addCase(Constantes.CASE_30));
-		Assert.assertTrue(reg.addCase(Constantes.CASE_31));
-		Assert.assertTrue(reg.addCase(Constantes.CASE_32));
-		Assert.assertTrue(reg.addCase(Constantes.CASE_40));
-		Assert.assertTrue(reg.addCase(Constantes.CASE_41));
-		Assert.assertTrue(reg.addCase(Constantes.CASE_42));
-		Assert.assertTrue(reg.addCase(Constantes.CASE_50));
-		Assert.assertTrue(reg.addCase(Constantes.CASE_51));
-		Assert.assertTrue(reg.addCase(new Case(6, 0, null, Constantes.SIZE)));
+		// Assert.assertTrue(reg.addCase(Constantes.CASE_30));
+		// Assert.assertTrue(reg.addCase(Constantes.CASE_31));
+		// Assert.assertTrue(reg.addCase(Constantes.CASE_32));
+		// Assert.assertTrue(reg.addCase(Constantes.CASE_40));
+		// Assert.assertTrue(reg.addCase(Constantes.CASE_41));
+		// Assert.assertTrue(reg.addCase(Constantes.CASE_42));
+		// Assert.assertTrue(reg.addCase(Constantes.CASE_50));
+		// Assert.assertTrue(reg.addCase(Constantes.CASE_51));
+		// Assert.assertTrue(reg.addCase(new Case(6, 0, null, Constantes.SIZE)));
 		try {
 			reg.isValid();
 			Assert.fail("Une exception aurait dû être levée");

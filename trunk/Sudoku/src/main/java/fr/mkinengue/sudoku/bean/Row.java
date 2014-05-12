@@ -9,14 +9,11 @@ package fr.mkinengue.sudoku.bean;
  */
 public class Row extends RowColumnAbstract {
 
-	private final boolean isRow;
-
 	/**
 	 * {@inheritDoc}
 	 */
 	public Row(final Case[] rowColumnParam, final int indexParam) {
 		super(rowColumnParam, indexParam);
-		isRow = true;
 	}
 
 	/**
@@ -24,7 +21,6 @@ public class Row extends RowColumnAbstract {
 	 */
 	public Row(final int size, final int indexParam) {
 		super(size, indexParam);
-		isRow = true;
 	}
 
 	/**
@@ -32,7 +28,7 @@ public class Row extends RowColumnAbstract {
 	 */
 	@Override
 	protected boolean isRowType() {
-		return isRow;
+		return true;
 	}
 
 	/**

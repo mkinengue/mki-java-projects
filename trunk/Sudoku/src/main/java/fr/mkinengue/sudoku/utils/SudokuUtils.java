@@ -24,7 +24,7 @@ public class SudokuUtils {
 	}
 
 	/**
-	 * Vérifie qu'il n'existe pas deux cases vides de la liste des cases en paramètre ayant la même valeur.<br />
+	 * Vérifie qu'il n'existe pas deux cases non vides de la liste des cases en paramètre ayant la même valeur.<br />
 	 * Retourne vrai s'il n'existe aucune paire de cases non vides de mêmes valeurs et faux s'il existe au moins une
 	 * paire de cases non vides ayant une même valeur
 	 * 
@@ -33,12 +33,12 @@ public class SudokuUtils {
 	 */
 	public static boolean verifyCases(final Case[] cc) {
 		final List<Integer> listOfValue = new ArrayList<Integer>();
-		for (int i = 0; i < cc.length; i++) {
-			if (!cc[i].isEmpty()) {
-				if (listOfValue.contains(cc[i].getValue())) {
+		for (final Case c : cc) {
+			if (!c.isEmpty()) {
+				if (listOfValue.contains(c.getValue())) {
 					return false;
 				}
-				listOfValue.add(cc[i].getValue());
+				listOfValue.add(c.getValue());
 			}
 		}
 		return true;
@@ -50,15 +50,18 @@ public class SudokuUtils {
 	 * ligne
 	 * 
 	 * @param row index de la ligne à extraire
-	 * @param grille grille de Sudoku
+	 * @param grille grille de Sudoku non nulle
 	 * @return Case[] ligne extraite
 	 */
 	public static Case[] extractRow(final int row, final Case[][] grille) throws InvalidRowException {
+		if (grille == null) {
+			throw new SudokuException("La grille de Sudoku fournie ne peut être nulle");
+		}
 		final int size = grille[0].length;
 		if (row < 0 || row >= size) {
 			throw new InvalidRowException(
-					"Le numéro de ligne fourni pour l'extraction des cases de la ligne doit être compris entre 0 et "
-							+ (size - 1) + " inclus. Ligne : " + row);
+							"Le numéro de ligne fourni pour l'extraction des cases de la ligne doit être compris entre 0 et "
+											+ (size - 1) + " inclus. Ligne : " + row);
 		}
 		return grille[row];
 	}
@@ -73,11 +76,14 @@ public class SudokuUtils {
 	 * @return Case[] colonne extraite
 	 */
 	public static Case[] extractColumn(final int column, final Case[][] grille) throws InvalidColumnException {
+		if (grille == null) {
+			throw new SudokuException("La grille de Sudoku fournie ne peut être nulle");
+		}
 		final int size = grille[0].length;
 		if (column < 0 || column >= size) {
 			throw new InvalidColumnException(
-					"Le numéro de colonne fourni pour l'extraction des cases de la colonne doit être compris entre 0 et "
-							+ (size - 1) + " inclus. Colonne : " + column);
+							"Le numéro de colonne fourni pour l'extraction des cases de la colonne doit être compris entre 0 et "
+											+ (size - 1) + " inclus. Colonne : " + column);
 		}
 		final Case[] colCases = new Case[size];
 		for (int i = 0; i < size; i++) {
@@ -113,8 +119,8 @@ public class SudokuUtils {
 			throw new SudokuException("L'une des classes n'a pas été trouvée dans le package " + packageName, e);
 		} catch (final IOException e) {
 			throw new SudokuException(
-					"Une exception de type IO a été trouvée lors de la recherche des classes du package " + packageName,
-					e);
+							"Une exception de type IO a été trouvée lors de la recherche des classes du package "
+											+ packageName, e);
 		}
 	}
 
@@ -127,7 +133,7 @@ public class SudokuUtils {
 	 * @throws ClassNotFoundException
 	 */
 	private static List<Class<?>> findClasses(final File directory, final String packageName)
-			throws ClassNotFoundException {
+					throws ClassNotFoundException {
 		final List<Class<?>> classes = new ArrayList<Class<?>>();
 		if (!directory.exists()) {
 			return classes;
