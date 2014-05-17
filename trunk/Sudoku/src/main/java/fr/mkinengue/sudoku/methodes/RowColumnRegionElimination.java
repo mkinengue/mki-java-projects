@@ -96,8 +96,8 @@ public abstract class RowColumnRegionElimination extends MethodeAbstract impleme
 			}
 
 			if (caseWasFilled) {
-				// Une case d'une ligne, colonne ou région a été mise à jour, on met la ligne ou colonne en tête de
-				// liste
+				// Une case d'une ligne, colonne ou région a été mise à jour, on met la ligne ou colonne ayant engendré
+				// une modification en tête de liste
 				priorityList.remove(i);
 				priorityList.addFirst(i);
 			}
@@ -123,8 +123,8 @@ public abstract class RowColumnRegionElimination extends MethodeAbstract impleme
 
 		// 3.on extrait la colonne ou la ligne correspondant à la case courante
 		// de la façon suivante :
-		// si currCase est un extrait de ligne, on extrait la colonne à laquelle appartient la case;
-		// sinon, on extrait la ligne à laquelle appartient la case
+		// si on est en mode élimination par ligne, on extrait la colonne à laquelle appartient la case;
+		// sinon (on est en mode élimination par colonne), on extrait la ligne à laquelle appartient la case
 		if (isRowType()) {
 			otherCurrRowCol = getSudoku().getCasesByColumn(currCase.getColumn());
 		} else {
@@ -136,28 +136,15 @@ public abstract class RowColumnRegionElimination extends MethodeAbstract impleme
 		if (currCase.isEmpty()) {
 			if (currCase.getCandidates().size() == 0) {
 				throw new SudokuException("La case " + currCase
-								+ " est vide mais, sa liste de candidats est également vide alors "
+								+ " est vide et, sa liste de candidats est également vide alors "
 								+ "qu'elle devrait contenir des candidats");
 			} else if (currCase.getCandidates().size() > 1) {
-				// 4.2.on essaie de réduire le nombre de candidats de la case courante en fonction du contenu de l'autre
+				// 4.2.on essaie de réduire la liste des candidats de la case courante en fonction du contenu de l'autre
 				// ligne ou colonne extraite
 				reduceCandidate(currCase, otherCurrRowCol);
 			}
 
-			if (currCase.getCandidates().size() == 1) {
-				// 4.1.on set la valeur de la case à la valeur du seul candidat
-				currCase.setValue(currCase.getCandidates().get(0));
-
-				// On supprime tous les candidats de la case
-				currCase.getCandidates().clear();
-
-				// On remplit la map des occurrences des nombres
-				getSudoku().updateMapOccurrencesByNumber(currCase.getValue());
-
-				// On supprime la case de la liste des cases vides
-				getSudoku().getEmptyCases().remove(currCase);
-				caseIsFilled = true;
-			}
+			caseIsFilled = updateCaseWithOneCandidate(currCase);
 		}
 		return caseIsFilled;
 	}
@@ -177,7 +164,7 @@ public abstract class RowColumnRegionElimination extends MethodeAbstract impleme
 			}
 			final Integer currVal = other[i].getValue();
 			if (c.getCandidates().contains(currVal)) {
-				// Le candidat est contenu dans la case, on le supprime
+				// La valeur de la case en cours d'analyse est un candidat de la case c, on le supprime
 				c.removeCandidate(currVal);
 			}
 		}
@@ -185,7 +172,7 @@ public abstract class RowColumnRegionElimination extends MethodeAbstract impleme
 
 	/**
 	 * Elimination de candidats par région.<br />
-	 * Les candidats de la case currCase sont réduits en fonction des valeurs contenues dans la région le contenant.<br />
+	 * Les candidats de la case currCase sont réduits en fonction des valeurs contenues dans la région la contenant.<br />
 	 * Si la case n'a plus de candidats, une exception levée. Si la case n'a plus qu'un candidat, celui-ci est valorisé
 	 * dans la case et la map des occurrences des nombres de la grille est mise à jour en même temps que la liste des
 	 * index de priorité de la région
@@ -210,34 +197,35 @@ public abstract class RowColumnRegionElimination extends MethodeAbstract impleme
 				}
 			}
 
-			if (currCase.getCandidates().size() == 1) {
-				currCase.setValue(currCase.getCandidates().get(0).intValue());
-
-				// On vide la liste des candidats de la case juste remplie
-				currCase.getCandidates().clear();
-
-				// On remplit la map des occurrences des nombres
-				getSudoku().updateMapOccurrencesByNumber(currCase.getValue());
-
-				// On supprime la case de la liste des cases vides
-				getSudoku().getEmptyCases().remove(currCase);
-
-				caseIsFilled = true;
-			}
+			caseIsFilled = updateCaseWithOneCandidate(currCase);
 		}
-
 		return caseIsFilled;
+	}
 
-		// TODO Elimination normalement effectuée par une autre méthode (SingletonNu)
-		// if (!currCase.isEmpty()) {
-		// // Si la case n'est pas vide, on supprime de la liste des candidats des autres cases de la région sa valeur
-		// for (final Case c : region.getCases()) {
-		// if (c.equals(currCase)) {
-		// continue;
-		// } else if (c.isEmpty() && c.getCandidates().contains(currCase.getValue())) {
-		// c.removeCandidate(currCase.getValue());
-		// }
-		// }
-		// }
+	/**
+	 * Mets à jour la case en paramètre dans le cas où sa liste de candidats ne contient plus qu'un unique élément. Dans
+	 * un tel cas, la case est valorisée avec le candidat, la liste des candidats vidés, la map du nombre d'occurrences
+	 * des valeurs contenues dans la grille incrémentée et la case currCase supprimée de la liste des cases vides de la
+	 * grille<br />
+	 * Retourne true si une mise à jour a lieu et false autrement
+	 * 
+	 * @param currCase
+	 * @return true / false
+	 */
+	private boolean updateCaseWithOneCandidate(Case currCase) {
+		if (currCase.getCandidates().size() == 1) {
+			currCase.setValue(currCase.getCandidates().get(0).intValue());
+
+			// On vide la liste des candidats de la case juste remplie
+			currCase.getCandidates().clear();
+
+			// On remplit la map des occurrences des nombres
+			getSudoku().updateMapOccurrencesByNumber(currCase.getValue());
+
+			// On supprime la case de la liste des cases vides
+			getSudoku().getEmptyCases().remove(currCase);
+			return true;
+		}
+		return false;
 	}
 }
