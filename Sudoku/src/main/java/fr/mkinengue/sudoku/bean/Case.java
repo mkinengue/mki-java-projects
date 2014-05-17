@@ -100,8 +100,8 @@ public class Case {
 	 * @param candidate
 	 * @return true / false
 	 */
-	public boolean removeCandidate(final int candidate) {
-		return candidates.remove(Integer.valueOf(candidate));
+	public boolean removeCandidate(final Integer candidate) {
+		return candidates.remove(candidate);
 	}
 
 	/**
@@ -126,7 +126,7 @@ public class Case {
 	public int hashCode() {
 		int hash = 7;
 		hash = 31 * hash + this.row;
-		hash = 31 * hash + this.column;
+		hash = 29 * hash + this.column;
 		return hash;
 	}
 
