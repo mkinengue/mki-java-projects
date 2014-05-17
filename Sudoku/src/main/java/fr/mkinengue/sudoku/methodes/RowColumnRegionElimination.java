@@ -12,7 +12,7 @@ import fr.mkinengue.sudoku.exception.SudokuException;
 /**
  * Classe abstraite de la méthode d'élimination par ligne ou par colonne
  */
-public abstract class RowColumnElimination extends MethodeAbstract implements Methode {
+public abstract class RowColumnRegionElimination extends MethodeAbstract implements Methode {
 
 	/**
 	 * Type d'élimination : LIGNE ou COLONNE
@@ -24,11 +24,11 @@ public abstract class RowColumnElimination extends MethodeAbstract implements Me
 	}
 
 	/**
-	 * Constructeur par d�faut
+	 * Constructeur par défaut
 	 * 
 	 * @param sudoku sudoku sur lequel appliquer la méthode de résolution
 	 */
-	public RowColumnElimination(final Sudoku sudoku) {
+	public RowColumnRegionElimination(final Sudoku sudoku) {
 		super(sudoku);
 	}
 
@@ -36,6 +36,11 @@ public abstract class RowColumnElimination extends MethodeAbstract implements Me
 
 	protected abstract String getType();
 
+	/**
+	 * Retourne true si la méthode d'élimination est de type ligne et false si de type colonne
+	 * 
+	 * @return true / false
+	 */
 	protected boolean isRowType() {
 		if (Type.ROW.equals(getType())) {
 			return true;
@@ -86,19 +91,20 @@ public abstract class RowColumnElimination extends MethodeAbstract implements Me
 				final boolean eliminatedByRegion = eliminateByRegion(current[j]);
 
 				if (!caseWasFilled) {
-					caseWasFilled = caseWasFilled || eliminatedByRowColumn || eliminatedByRegion;
+					caseWasFilled = eliminatedByRowColumn || eliminatedByRegion;
 				}
 			}
 
 			if (caseWasFilled) {
-				// Une case de la ligne ou de la colonne a été mise à jour, on met la ligne ou colonne en tête de liste
+				// Une case d'une ligne, colonne ou région a été mise à jour, on met la ligne ou colonne en tête de
+				// liste
 				priorityList.remove(i);
 				priorityList.addFirst(i);
 			}
 		}
 
 		getLog().log(Level.INFO, "Méthode {0} exécutée en {1} ms",
-				new Object[] { getType(), String.valueOf(System.currentTimeMillis() - debut) });
+						new Object[] { getType(), String.valueOf(System.currentTimeMillis() - debut) });
 	}
 
 	/**
@@ -130,8 +136,8 @@ public abstract class RowColumnElimination extends MethodeAbstract implements Me
 		if (currCase.isEmpty()) {
 			if (currCase.getCandidates().size() == 0) {
 				throw new SudokuException("La case " + currCase
-						+ " est vide mais, sa liste de candidats est également vide alors "
-						+ "qu'elle devrait contenir des candidats");
+								+ " est vide mais, sa liste de candidats est également vide alors "
+								+ "qu'elle devrait contenir des candidats");
 			} else if (currCase.getCandidates().size() > 1) {
 				// 4.2.on essaie de réduire le nombre de candidats de la case courante en fonction du contenu de l'autre
 				// ligne ou colonne extraite
@@ -193,7 +199,7 @@ public abstract class RowColumnElimination extends MethodeAbstract implements Me
 		if (currCase.isEmpty()) {
 			if (currCase.getCandidates().size() == 0) {
 				throw new SudokuException(getClass().getSimpleName() + ".eliminateByRegion:la case " + currCase
-						+ " est vide mais n'a plus de candidats");
+								+ " est vide mais n'a plus de candidats");
 			} else if (currCase.getCandidates().size() > 1) {
 				for (final Case c : region.getCases()) {
 					if (c.isEmpty() || c.equals(currCase)) {

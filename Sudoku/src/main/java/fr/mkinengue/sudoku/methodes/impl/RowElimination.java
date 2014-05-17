@@ -4,12 +4,12 @@ import java.util.logging.Logger;
 
 import fr.mkinengue.sudoku.core.Sudoku;
 import fr.mkinengue.sudoku.methodes.Methode;
-import fr.mkinengue.sudoku.methodes.RowColumnElimination;
+import fr.mkinengue.sudoku.methodes.RowColumnRegionElimination;
 
 /**
  * Méthode consistant à réduire les candidats de chacune des lignes de la grille de Sudoku
  */
-public class RowElimination extends RowColumnElimination implements Methode {
+public class RowElimination extends RowColumnRegionElimination implements Methode {
 
 	private static Logger LOG = Logger.getLogger(RowElimination.class.getSimpleName());
 
@@ -22,7 +22,7 @@ public class RowElimination extends RowColumnElimination implements Methode {
 	 */
 	@Override
 	protected String getType() {
-		return RowColumnElimination.Type.ROW;
+		return RowColumnRegionElimination.Type.ROW;
 	}
 
 	/**
