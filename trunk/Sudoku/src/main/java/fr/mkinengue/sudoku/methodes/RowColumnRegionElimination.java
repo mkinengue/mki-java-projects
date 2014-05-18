@@ -74,10 +74,8 @@ public abstract class RowColumnRegionElimination extends MethodeAbstract impleme
 
 		// Copy the priority list
 		searchIdxList = (LinkedList<Integer>) priorityList.clone();
-		getLog().log(Level.INFO, "SearchIdxList : {0}", new Object[] { searchIdxList });
 
 		for (final Integer i : searchIdxList) {
-			getLog().log(Level.INFO, "Index : {0}, Type : {1}", new Object[] { i, getType() });
 			if (isRowType()) {
 				current = getSudoku().getCasesByRow(i);
 			} else {
