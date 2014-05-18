@@ -19,6 +19,8 @@ import fr.mkinengue.sudoku.exception.NotValidException;
 import fr.mkinengue.sudoku.exception.SudokuException;
 import fr.mkinengue.sudoku.logger.LogUtils;
 import fr.mkinengue.sudoku.methodes.Methode;
+import fr.mkinengue.sudoku.methodes.impl.IndirectElimination;
+import fr.mkinengue.sudoku.methodes.impl.NakedGroup;
 import fr.mkinengue.sudoku.methodes.impl.Singleton;
 import fr.mkinengue.sudoku.methodes.impl.SingletonCache;
 import fr.mkinengue.sudoku.methodes.impl.SingletonNu;
@@ -35,7 +37,7 @@ public class Sudoku {
 		LOG.setLevel(Level.FINEST);
 	}
 
-	private static final int MAX_ITER_TO_SOLVE = 1000;
+	private static final int MAX_ITER_TO_SOLVE = 1;
 
 	private final int size;
 
@@ -75,18 +77,22 @@ public class Sudoku {
 	/** Espacement correspondant à une case vide */
 	private static final String DISP_EMPTY_CASE_VALUE = "   ";
 
+	/** Nom du package contenant les méthodes de résolution ou d'élimination du Sudoku */
+	private static final String PACKAGE_METHODES_RES_SUDOKU = "fr.mkinengue.sudoku.methodes.impl";
+
 	/**
 	 * Liste statique des méthodes de résolution à exclure. Uniquement pour les tests
 	 */
 	private static List<Class<?>> TO_EXCLUDE = new ArrayList<Class<?>>();
 	static {
+		// TO_EXCLUDE.add(CaseByCaseElimination.class);
 		// TO_EXCLUDE.add(RowElimination.class);
 		// TO_EXCLUDE.add(ColumnElimination.class);
-		// TO_EXCLUDE.add(IndirectElimination.class);
+		TO_EXCLUDE.add(IndirectElimination.class);
 		TO_EXCLUDE.add(Singleton.class);
 		TO_EXCLUDE.add(SingletonCache.class);
 		TO_EXCLUDE.add(SingletonNu.class);
-		// TO_EXCLUDE.add(NakedGroup.class);
+		TO_EXCLUDE.add(NakedGroup.class);
 	}
 
 	/**
@@ -158,7 +164,7 @@ public class Sudoku {
 	private void initMethodes() {
 		// Définitions des méthodes de résolution
 		final long debut = System.currentTimeMillis();
-		final Class<?>[] classes = SudokuUtils.getClasses("fr.perso.sudoku.methodes.impl");
+		final Class<?>[] classes = SudokuUtils.getClasses(PACKAGE_METHODES_RES_SUDOKU);
 		for (final Class<?> classe : classes) {
 			try {
 				if (!TO_EXCLUDE.contains(classe) && !classe.getSimpleName().endsWith("Test")) {
@@ -256,36 +262,64 @@ public class Sudoku {
 	}
 
 	/**
-	 * Met à jour les listes de priorité suite à la valuation de la case newlyValuatedCase<br />
-	 * Pour chacune des listes de priorité, on positionne en début de liste de priorité la modification correspondante
+	 * Met à jour les listes de priorité suite à la modification de la case changedCase<br />
+	 * Pour chacune des listes de priorité, on positionne en début de liste les références de la case correspondante
 	 * 
-	 * @param Case newlyValuatedCase case fraîchement valuée
+	 * @param Case changedCase case fraîchement modifiée
 	 */
-	public void updatePrioritiesByCase(final Case newlyValuatedCase) {
+	public void updatePrioritiesByCase(final Case changedCase) {
 		// Mise à jour de la liste de priorité des lignes
-		priorityRows.remove(Integer.valueOf(newlyValuatedCase.getRow()));
-		priorityRows.addFirst(Integer.valueOf(newlyValuatedCase.getRow()));
+		priorityRows.remove(Integer.valueOf(changedCase.getRow()));
+		priorityRows.addFirst(Integer.valueOf(changedCase.getRow()));
 
 		// Mise à jour de la liste de priorité des colonnes
-		priorityColumns.remove(Integer.valueOf(newlyValuatedCase.getColumn()));
-		priorityColumns.addFirst(Integer.valueOf(newlyValuatedCase.getColumn()));
+		priorityColumns.remove(Integer.valueOf(changedCase.getColumn()));
+		priorityColumns.addFirst(Integer.valueOf(changedCase.getColumn()));
 
-		// Mise à jour de la liste de priorité des nombres
-		priorityNumbers.remove(newlyValuatedCase.getValue());
-		priorityNumbers.addFirst(newlyValuatedCase.getValue());
+		// Mise à jour de la liste de priorité des nombres si la case n'est pas vide
+		if (changedCase.getValue() != null) {
+			priorityNumbers.remove(changedCase.getValue());
+			priorityNumbers.addFirst(changedCase.getValue());
+		}
 
 		// Mise à jour de la liste de priorité des régions
 		// On cherche la région correspondant à la case
-		final Region regionValuated = regionsByCase.get(newlyValuatedCase);
-		if (regionValuated == null) {
-			LOG.warning("Attention : la région de la case nouvellement valuée (" + newlyValuatedCase
+		final Region regionOfChangedCase = regionsByCase.get(changedCase);
+		if (regionOfChangedCase == null) {
+			LOG.warning("Attention : la région de la case nouvellement valuée (" + changedCase
 							+ ") n'a pas été trouvée => pas de mise à jour de la liste de priorité des régions.");
 			return;
 		}
 		// On cherche maintenant la première case de la région
-		final Case firstCaseRegion = regionValuated.getFirstCase();
+		final Case firstCaseRegion = regionOfChangedCase.getFirstCase();
 		priorityRegions.remove(firstCaseRegion);
 		priorityRegions.addFirst(firstCaseRegion);
+	}
+
+	/**
+	 * Mets à jour la case en paramètre dans le cas où sa liste de candidats ne contient plus qu'un unique élément. Dans
+	 * un tel cas, la case est valorisée avec le candidat, la liste des candidats vidée, la map du nombre d'occurrences
+	 * des valeurs contenues dans la grille incrémentée et la case currCase supprimée de la liste des cases vides de la
+	 * grille. Les listes des priorités ont été également mises à jour<br />
+	 * 
+	 * @param currCase
+	 */
+	public void updateCaseWithOneCandidate(Case currCase) {
+		if (currCase.getCandidates().size() == 1) {
+			currCase.setValue(currCase.getCandidates().get(0).intValue());
+
+			// On vide la liste des candidats de la case juste remplie
+			currCase.getCandidates().clear();
+
+			// On remplit la map des occurrences des nombres
+			updateMapOccurrencesByNumber(currCase.getValue());
+
+			// On met à jour la liste des priorités
+			updatePrioritiesByCase(currCase);
+
+			// On supprime la case de la liste des cases vides
+			getEmptyCases().remove(currCase);
+		}
 	}
 
 	/**
@@ -302,10 +336,15 @@ public class Sudoku {
 		final long debut = System.currentTimeMillis();
 		// Réduction de la grille avant de commencer
 		// reduceCaseByCase();
-		final int cptExec = 0;
+		int cptExec = 0;
 		while (!isFull() && cptExec < MAX_ITER_TO_SOLVE) {
 			for (final Methode methode : methodes) {
 				methode.execute();
+			}
+
+			cptExec++;
+			if (cptExec % 100 == 0) {
+				LOG.log(Level.INFO, "Fin itération {0}", cptExec);
 			}
 		}
 
@@ -314,8 +353,9 @@ public class Sudoku {
 		}
 
 		// LogUtils.logExitingMethod(level, className, methodName, start)
-		LOG.log(Level.INFO, "Sudoku résolu en {0} ms", System.currentTimeMillis() - debut);
-		return true;
+		LOG.log(Level.INFO, "Fin de tentative de résolution en {0} ms après {1} itérations",
+						new Object[] { System.currentTimeMillis() - debut, cptExec });
+		return isFull();
 	}
 
 	/**
@@ -586,14 +626,15 @@ public class Sudoku {
 						{ 3, null, null, null, 2, null, 5, null, null } };
 		final Sudoku sudoku = new Sudoku(grille);
 		System.out.println(sudoku);
-		System.out.println(sudoku.isFull());
+		System.out.println("Sudoku is full : " + sudoku.isFull());
 
-		LOG.log(Level.INFO, "Sudoku résolu en {0} ms et {1} param", new Object[] { 20, "toto" });
-		System.out.println(Package.getPackage("fr.perso.sudoku.methodes.impl"));
+		// LOG.log(Level.INFO, "Sudoku résolu en {0} ms et {1} param", new Object[] { 20, "toto" });
+		System.out.println("Methodes : " + Package.getPackage("fr.mkinengue.sudoku.methodes.impl"));
 
 		final boolean solved = sudoku.solve();
 		System.out.println("Sudoku solved : " + solved);
 		System.out.println("Sudoku is full : " + sudoku.isFull());
+		System.out.println(sudoku);
 
 		// TODO Test isValid()
 		// TODO Test RegionByFirstCase
