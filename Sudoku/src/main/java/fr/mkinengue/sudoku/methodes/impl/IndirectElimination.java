@@ -14,8 +14,8 @@ import fr.mkinengue.sudoku.methodes.MethodeAbstract;
 /**
  * Si, sur une ligne L coupant une région B, un nombre n'apparaît pas comme candidat à l'extérieur de B, supprimer ce
  * nombre comme candidat partout dans B sauf sur L.<br />
- * Si, dans une région B coupée par une ligne L, un nombre n'apparaît pas comme candidat ailleurs que sur L, supprimer
- * ce nombre comme candidat partout sur L à l'extérieur de B.<br />
+ * Si, dans une région B coupée par une ligne L, un nombre n'apparaît que sur L (intersection avec B), supprimer ce
+ * nombre comme candidat partout sur L à l'extérieur de B.<br />
  * ... et symétriquement pour les colonnes.
  */
 public class IndirectElimination extends MethodeAbstract implements Methode {
@@ -58,7 +58,7 @@ public class IndirectElimination extends MethodeAbstract implements Methode {
 
 				final List<Integer> columnsIdx = region.getColumns();
 				for (final Integer columnIdx : columnsIdx) {
-					eliminationColumnCuttingRegion(Integer.valueOf(candidat), columnIdx.intValue(), region);
+					eliminationColumnCuttingRegion(candidat, columnIdx.intValue(), region);
 				}
 			}
 		}
@@ -86,7 +86,8 @@ public class IndirectElimination extends MethodeAbstract implements Methode {
 	 * @param region région
 	 */
 	private void eliminationRowColumnCuttingRegion(final boolean isRow, final Integer candidat, final Case[] cases,
-			final Region region) {
+					final Region region) {
+		// On cherche l'intersection de la ligne ou colonne avec la région
 		List<Case> caseRegionRowCol = null;
 		if (isRow) {
 			caseRegionRowCol = region.getCasesByRow(cases[0].getRow());
@@ -94,12 +95,25 @@ public class IndirectElimination extends MethodeAbstract implements Methode {
 			caseRegionRowCol = region.getCasesByColumn(cases[0].getColumn());
 		}
 
-		if (caseRegionRowCol == null) {
-			return;
+		// Si le candidat pour lequel on veut appliquer la méthode est une valeur de la ligne/colonne ou de la région,
+		// on arrête
+		for (final Case c : cases) {
+			if (!c.isEmpty() && c.getValue() == candidat) {
+				// La valeur de l'une de cases de la ligne/colonne est celle du candidat cherché. On arrête pour ce
+				// candidat
+				return;
+			}
+		}
+		for (final Case c : region.getCases()) {
+			if (!c.isEmpty() && c.getValue() == candidat) {
+				// La valeur de l'une de cases de la région est celle du candidat cherché. On arrête pour ce
+				// candidat
+				return;
+			}
 		}
 
 		// On vérifie que le candidat est contenu dans l'une des cases intersection entre la ligne/colonne et la région
-		// Si ce n'est pas le cas, on arrête tout car alors, le candidat est forcément sur le reste de la ligne/colonne
+		// Si ce n'est pas le cas, on arrête car ce n'est pas un candidat des cases intersection
 		boolean containsCandidate = false;
 		for (final Case c : caseRegionRowCol) {
 			if (c.getCandidates().contains(candidat)) {
@@ -125,21 +139,11 @@ public class IndirectElimination extends MethodeAbstract implements Methode {
 		// candidat n'est pas contenu dans les autres cases de la ligne/colonne. On supprime le candidat des autres
 		// cases de la région
 		for (final Case c : region.getCases()) {
-			if (caseRegionRowCol.contains(c)) {
-				// Il s'agit de l'une des cases intersection ligne/colonne avec la région, on l'ignore
+			if (caseRegionRowCol.contains(c) || !c.isEmpty()) {
+				// Il s'agit de l'une des cases intersection ligne/colonne avec la région ou d'une case pleine, on
+				// l'ignore
 				continue;
 			}
-
-			// S'il s'agit de l'une des cases intersection ligne/colonne avec la région, on l'ignore
-			// if (isRow) {
-			// if (c.getRow() == cases[0].getRow()) {
-			// continue;
-			// }
-			// } else {
-			// if (c.getColumn() == cases[0].getColumn()) {
-			// continue;
-			// }
-			// }
 
 			if (c.getCandidates().contains(candidat)) {
 				c.removeCandidate(candidat);
@@ -190,7 +194,7 @@ public class IndirectElimination extends MethodeAbstract implements Methode {
 	 * @param region région
 	 */
 	private void eliminationRegionCuttingRowColumn(final boolean isRow, final Integer candidat, final Case[] cases,
-			final Region region) {
+					final Region region) {
 		List<Case> caseRegionRowCol = null;
 		if (isRow) {
 			caseRegionRowCol = region.getCasesByRow(cases[0].getRow());
@@ -198,8 +202,21 @@ public class IndirectElimination extends MethodeAbstract implements Methode {
 			caseRegionRowCol = region.getCasesByColumn(cases[0].getColumn());
 		}
 
-		if (caseRegionRowCol == null) {
-			return;
+		// Si le candidat pour lequel on veut appliquer la méthode est une valeur de la ligne/colonne ou de la région,
+		// on arrête
+		for (final Case c : cases) {
+			if (!c.isEmpty() && c.getValue() == candidat) {
+				// La valeur de l'une de cases de la ligne/colonne est celle du candidat cherché. On arrête pour ce
+				// candidat
+				return;
+			}
+		}
+		for (final Case c : region.getCases()) {
+			if (!c.isEmpty() && c.getValue() == candidat) {
+				// La valeur de l'une de cases de la région est celle du candidat cherché. On arrête pour ce
+				// candidat
+				return;
+			}
 		}
 
 		// On vérifie que le candidat est contenu dans l'une des cases intersection entre la ligne/colonne et la région

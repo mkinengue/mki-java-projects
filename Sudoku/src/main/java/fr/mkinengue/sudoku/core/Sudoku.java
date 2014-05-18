@@ -19,11 +19,8 @@ import fr.mkinengue.sudoku.exception.NotValidException;
 import fr.mkinengue.sudoku.exception.SudokuException;
 import fr.mkinengue.sudoku.logger.LogUtils;
 import fr.mkinengue.sudoku.methodes.Methode;
-import fr.mkinengue.sudoku.methodes.impl.IndirectElimination;
 import fr.mkinengue.sudoku.methodes.impl.NakedGroup;
-import fr.mkinengue.sudoku.methodes.impl.Singleton;
 import fr.mkinengue.sudoku.methodes.impl.SingletonCache;
-import fr.mkinengue.sudoku.methodes.impl.SingletonNu;
 import fr.mkinengue.sudoku.utils.SudokuUtils;
 
 /**
@@ -37,7 +34,7 @@ public class Sudoku {
 		LOG.setLevel(Level.FINEST);
 	}
 
-	private static final int MAX_ITER_TO_SOLVE = 1;
+	private static final int MAX_ITER_TO_SOLVE = 1000;
 
 	private final int size;
 
@@ -88,10 +85,10 @@ public class Sudoku {
 		// TO_EXCLUDE.add(CaseByCaseElimination.class);
 		// TO_EXCLUDE.add(RowElimination.class);
 		// TO_EXCLUDE.add(ColumnElimination.class);
-		TO_EXCLUDE.add(IndirectElimination.class);
-		TO_EXCLUDE.add(Singleton.class);
+		// TO_EXCLUDE.add(IndirectElimination.class);
+		// TO_EXCLUDE.add(Singleton.class);
 		TO_EXCLUDE.add(SingletonCache.class);
-		TO_EXCLUDE.add(SingletonNu.class);
+		// TO_EXCLUDE.add(SingletonNu.class);
 		TO_EXCLUDE.add(NakedGroup.class);
 	}
 
