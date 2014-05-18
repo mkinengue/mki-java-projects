@@ -60,7 +60,7 @@ public class Region {
 	 * @return Case[]
 	 */
 	public final Case[] getCases() {
-		return (Case[]) region.toArray();
+		return region.toArray(new Case[0]);
 	}
 
 	/**

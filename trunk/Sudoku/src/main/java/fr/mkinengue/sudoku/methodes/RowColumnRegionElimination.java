@@ -74,32 +74,22 @@ public abstract class RowColumnRegionElimination extends MethodeAbstract impleme
 
 		// Copy the priority list
 		searchIdxList = (LinkedList<Integer>) priorityList.clone();
+		getLog().log(Level.INFO, "SearchIdxList : {0}", new Object[] { searchIdxList });
 
 		for (final Integer i : searchIdxList) {
+			getLog().log(Level.INFO, "Index : {0}, Type : {1}", new Object[] { i, getType() });
 			if (isRowType()) {
 				current = getSudoku().getCasesByRow(i);
 			} else {
 				current = getSudoku().getCasesByColumn(i);
 			}
 
-			boolean caseWasFilled = false;
 			for (int j = 0; j < size; j++) {
 				// 3.élimination par ligne/colonne
-				final boolean eliminatedByRowColumn = eliminateByRowColumn(current[j]);
+				eliminateByRowColumn(current[j]);
 
 				// 4.élimination par région
-				final boolean eliminatedByRegion = eliminateByRegion(current[j]);
-
-				if (!caseWasFilled) {
-					caseWasFilled = eliminatedByRowColumn || eliminatedByRegion;
-				}
-			}
-
-			if (caseWasFilled) {
-				// Une case d'une ligne, colonne ou région a été mise à jour, on met la ligne ou colonne ayant engendré
-				// une modification en tête de liste
-				priorityList.remove(i);
-				priorityList.addFirst(i);
+				eliminateByRegion(current[j]);
 			}
 		}
 
@@ -116,9 +106,8 @@ public abstract class RowColumnRegionElimination extends MethodeAbstract impleme
 	 * index de priorité de la ligne ou de la colonne
 	 * 
 	 * @param currCase
-	 * @return
 	 */
-	private boolean eliminateByRowColumn(final Case currCase) {
+	private void eliminateByRowColumn(final Case currCase) {
 		Case[] otherCurrRowCol;
 
 		// 3.on extrait la colonne ou la ligne correspondant à la case courante
@@ -132,7 +121,6 @@ public abstract class RowColumnRegionElimination extends MethodeAbstract impleme
 		}
 
 		// 4.si la case est vide, on vérifie s'il ne reste plus qu'un candidat
-		boolean caseIsFilled = false;
 		if (currCase.isEmpty()) {
 			if (currCase.getCandidates().size() == 0) {
 				throw new SudokuException("La case " + currCase
@@ -144,9 +132,8 @@ public abstract class RowColumnRegionElimination extends MethodeAbstract impleme
 				reduceCandidate(currCase, otherCurrRowCol);
 			}
 
-			caseIsFilled = updateCaseWithOneCandidate(currCase);
+			getSudoku().updateCaseWithOneCandidate(currCase);
 		}
-		return caseIsFilled;
 	}
 
 	/**
@@ -178,11 +165,9 @@ public abstract class RowColumnRegionElimination extends MethodeAbstract impleme
 	 * index de priorité de la région
 	 * 
 	 * @param Case currCase
-	 * @return boolean : true / false
 	 */
-	private boolean eliminateByRegion(final Case currCase) {
+	private void eliminateByRegion(final Case currCase) {
 		final Region region = getSudoku().getRegionByCase(currCase);
-		boolean caseIsFilled = false;
 		if (currCase.isEmpty()) {
 			if (currCase.getCandidates().size() == 0) {
 				throw new SudokuException(getClass().getSimpleName() + ".eliminateByRegion:la case " + currCase
@@ -197,35 +182,7 @@ public abstract class RowColumnRegionElimination extends MethodeAbstract impleme
 				}
 			}
 
-			caseIsFilled = updateCaseWithOneCandidate(currCase);
+			getSudoku().updateCaseWithOneCandidate(currCase);
 		}
-		return caseIsFilled;
-	}
-
-	/**
-	 * Mets à jour la case en paramètre dans le cas où sa liste de candidats ne contient plus qu'un unique élément. Dans
-	 * un tel cas, la case est valorisée avec le candidat, la liste des candidats vidés, la map du nombre d'occurrences
-	 * des valeurs contenues dans la grille incrémentée et la case currCase supprimée de la liste des cases vides de la
-	 * grille<br />
-	 * Retourne true si une mise à jour a lieu et false autrement
-	 * 
-	 * @param currCase
-	 * @return true / false
-	 */
-	private boolean updateCaseWithOneCandidate(Case currCase) {
-		if (currCase.getCandidates().size() == 1) {
-			currCase.setValue(currCase.getCandidates().get(0).intValue());
-
-			// On vide la liste des candidats de la case juste remplie
-			currCase.getCandidates().clear();
-
-			// On remplit la map des occurrences des nombres
-			getSudoku().updateMapOccurrencesByNumber(currCase.getValue());
-
-			// On supprime la case de la liste des cases vides
-			getSudoku().getEmptyCases().remove(currCase);
-			return true;
-		}
-		return false;
 	}
 }
