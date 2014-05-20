@@ -64,6 +64,7 @@ public class CaseByCaseElimination extends MethodeAbstract implements Methode {
 						continue;
 					}
 					caseChanged = caseChanged || c.removeCandidate(cc.getValue());
+					getSudoku().updateCaseWithOneCandidate(c);
 				}
 
 				// Elimination sur la ligne
@@ -72,6 +73,7 @@ public class CaseByCaseElimination extends MethodeAbstract implements Methode {
 						continue;
 					}
 					caseChanged = caseChanged || c.removeCandidate(cc.getValue());
+					getSudoku().updateCaseWithOneCandidate(c);
 				}
 
 				// Elimination sur la colonne
@@ -80,6 +82,7 @@ public class CaseByCaseElimination extends MethodeAbstract implements Methode {
 						continue;
 					}
 					caseChanged = caseChanged || c.removeCandidate(cc.getValue());
+					getSudoku().updateCaseWithOneCandidate(c);
 				}
 
 				// Mise à jour du Sudoku si la case a changé

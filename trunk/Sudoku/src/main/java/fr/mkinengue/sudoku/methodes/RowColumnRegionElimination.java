@@ -169,18 +169,20 @@ public abstract class RowColumnRegionElimination extends MethodeAbstract impleme
 		if (currCase.isEmpty()) {
 			if (currCase.getCandidates().size() == 0) {
 				throw new SudokuException(getClass().getSimpleName() + ".eliminateByRegion:la case " + currCase
-								+ " est vide mais n'a plus de candidats");
-			} else if (currCase.getCandidates().size() > 1) {
+								+ " est vide mais n'a plus de candidats possibles");
+			}
+
+			getSudoku().updateCaseWithOneCandidate(currCase);
+			if (currCase.getCandidates().size() > 1) {
 				for (final Case c : region.getCases()) {
 					if (c.isEmpty() || c.equals(currCase)) {
 						continue;
 					} else if (currCase.getCandidates().contains(c.getValue())) {
 						currCase.removeCandidate(c.getValue());
+						getSudoku().updateCaseWithOneCandidate(currCase);
 					}
 				}
 			}
-
-			getSudoku().updateCaseWithOneCandidate(currCase);
 		}
 	}
 }

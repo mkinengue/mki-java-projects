@@ -112,13 +112,16 @@ public class Singleton extends MethodeAbstract implements Methode {
 		final Integer[] candidates = getAllCandidates();
 		final Case uniqueEmptyCase = getUniqueEmptyCase(rowCases, candidates);
 		if (uniqueEmptyCase == null) {
-			// Aucune case vide ou au moins deux cases vides trouv�es
+			// Aucune case vide ou au moins deux cases vides trouvées
 			return;
 		}
 
 		for (final Integer value : candidates) {
 			if (value != null) {
 				uniqueEmptyCase.setValue(value);
+
+				// On vide la liste des candidats
+				uniqueEmptyCase.getCandidates().clear();
 
 				// On remplit la map des occurrences des nombres
 				getSudoku().updateMapOccurrencesByNumber(uniqueEmptyCase.getValue());
