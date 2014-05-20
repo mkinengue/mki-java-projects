@@ -20,7 +20,6 @@ import fr.mkinengue.sudoku.exception.SudokuException;
 import fr.mkinengue.sudoku.logger.LogUtils;
 import fr.mkinengue.sudoku.methodes.Methode;
 import fr.mkinengue.sudoku.methodes.impl.NakedGroup;
-import fr.mkinengue.sudoku.methodes.impl.SingletonCache;
 import fr.mkinengue.sudoku.utils.SudokuUtils;
 
 /**
@@ -87,7 +86,7 @@ public class Sudoku {
 		// TO_EXCLUDE.add(ColumnElimination.class);
 		// TO_EXCLUDE.add(IndirectElimination.class);
 		// TO_EXCLUDE.add(Singleton.class);
-		TO_EXCLUDE.add(SingletonCache.class);
+		// TO_EXCLUDE.add(SingletonCache.class);
 		// TO_EXCLUDE.add(SingletonNu.class);
 		TO_EXCLUDE.add(NakedGroup.class);
 	}

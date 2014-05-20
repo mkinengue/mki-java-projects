@@ -30,13 +30,7 @@ public class SingletonNu extends MethodeAbstract implements Methode {
 		for (final Case[] cc : grille) {
 			for (final Case c : cc) {
 				if (c.isEmpty() && c.getCandidates().size() == 1) {
-					c.setValue(c.getCandidates().get(0).intValue());
-
-					// On remplit la map des occurrences des nombres
-					getSudoku().updateMapOccurrencesByNumber(c.getValue());
-
-					// On supprime la case de la liste des cases vides
-					getSudoku().getEmptyCases().remove(c);
+					getSudoku().updateCaseWithOneCandidate(c);
 				}
 			}
 		}

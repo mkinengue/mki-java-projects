@@ -153,7 +153,7 @@ public class NakedGroup extends MethodeAbstract implements Methode {
 
 			// Exécution par colonne
 			final List<Case> casesTripletColumn = lookForTripletCandidatesColumn(candidat1, candidat2, candidat3,
-					rowCol);
+							rowCol);
 			if (!casesTripletColumn.isEmpty()) {
 				for (final Case cCol : getSudoku().getCasesByColumn(rowCol)) {
 					if (!casesTripletColumn.contains(cCol)) {
@@ -177,37 +177,45 @@ public class NakedGroup extends MethodeAbstract implements Methode {
 	 * @param candidat4 candidat 4 du quadruplet
 	 */
 	private void executeQuadrupletForRowsColumns(final int candidat1, final int candidat2, final int candidat3,
-			final int candidat4) {
+					final int candidat4) {
 		LogUtils.logEnteringMethod(LOG, Level.INFO, getClass().getSimpleName(), "executeQuadrupletForRowsColumns");
 		for (int rowCol = 0; rowCol < getSudoku().getGrille().length; rowCol++) {
 			// Ex�cution par ligne
 			final List<Case> casesQuadrupletRow = lookForQuadrupletCandidatesRow(candidat1, candidat2, candidat3,
-					candidat4, rowCol);
+							candidat4, rowCol);
 			if (!casesQuadrupletRow.isEmpty()) {
 				for (final Case cRow : getSudoku().getCasesByRow(rowCol)) {
 					if (!casesQuadrupletRow.contains(cRow)) {
 						// La case courante de la ligne n'est pas l'une des case contenant la paire candidat1/candidat2
 						// On retire d'une telle case, tous les candidats de la paire
 						cRow.removeCandidate(candidat1);
+						getSudoku().updateCaseWithOneCandidate(cRow);
 						cRow.removeCandidate(candidat2);
+						getSudoku().updateCaseWithOneCandidate(cRow);
 						cRow.removeCandidate(candidat3);
+						getSudoku().updateCaseWithOneCandidate(cRow);
 						cRow.removeCandidate(candidat4);
+						getSudoku().updateCaseWithOneCandidate(cRow);
 					}
 				}
 			}
 
 			// Exécution par colonne
 			final List<Case> casesQuadrupletColumn = lookForQuadrupletCandidatesColumn(candidat1, candidat2, candidat3,
-					candidat4, rowCol);
+							candidat4, rowCol);
 			if (!casesQuadrupletColumn.isEmpty()) {
 				for (final Case cCol : getSudoku().getCasesByColumn(rowCol)) {
 					if (!casesQuadrupletColumn.contains(cCol)) {
 						// La case courante de la ligne n'est pas l'une des case contenant la paire candidat1/candidat2
 						// On retire d'une telle case, tous les candidats de la paire
 						cCol.removeCandidate(candidat1);
+						getSudoku().updateCaseWithOneCandidate(cCol);
 						cCol.removeCandidate(candidat2);
+						getSudoku().updateCaseWithOneCandidate(cCol);
 						cCol.removeCandidate(candidat3);
+						getSudoku().updateCaseWithOneCandidate(cCol);
 						cCol.removeCandidate(candidat4);
+						getSudoku().updateCaseWithOneCandidate(cCol);
 					}
 				}
 			}
@@ -230,7 +238,9 @@ public class NakedGroup extends MethodeAbstract implements Methode {
 						// La case courante de la région n'est pas l'une des cases contenant les candidats cherchés
 						// On supprime les candidats de la liste des candidats de cette case
 						cRegion.removeCandidate(candidat1);
+						getSudoku().updateCaseWithOneCandidate(cRegion);
 						cRegion.removeCandidate(candidat2);
+						getSudoku().updateCaseWithOneCandidate(cRegion);
 					}
 				}
 			}
@@ -254,8 +264,11 @@ public class NakedGroup extends MethodeAbstract implements Methode {
 						// La case courante de la r�gion n'est pas l'une des cases contenant les candidats cherch�s
 						// On supprime les candidats de la liste des candidats de cette case
 						cRegion.removeCandidate(candidat1);
+						getSudoku().updateCaseWithOneCandidate(cRegion);
 						cRegion.removeCandidate(candidat2);
+						getSudoku().updateCaseWithOneCandidate(cRegion);
 						cRegion.removeCandidate(candidat3);
+						getSudoku().updateCaseWithOneCandidate(cRegion);
 					}
 				}
 			}
@@ -271,20 +284,24 @@ public class NakedGroup extends MethodeAbstract implements Methode {
 	 * @param candidat4 candidat 4 du quadruplet
 	 */
 	private void executeQuadrupletForRegions(final int candidat1, final int candidat2, final int candidat3,
-			final int candidat4) {
+					final int candidat4) {
 		LogUtils.logEnteringMethod(LOG, Level.INFO, getClass().getSimpleName(), "executeQuadrupletForRegions");
 		for (final Region region : getSudoku().getRegionsByFirstCase().values()) {
 			final List<Case> casesRegion = lookForQuadrupletCandidatesRegion(candidat1, candidat2, candidat3,
-					candidat4, region);
+							candidat4, region);
 			if (!casesRegion.isEmpty()) {
 				for (final Case cRegion : region.getCases()) {
 					if (!casesRegion.contains(cRegion)) {
 						// La case courante de la r�gion n'est pas l'une des cases contenant les candidats cherch�s
 						// On supprime les candidats de la liste des candidats de cette case
 						cRegion.removeCandidate(candidat1);
+						getSudoku().updateCaseWithOneCandidate(cRegion);
 						cRegion.removeCandidate(candidat2);
+						getSudoku().updateCaseWithOneCandidate(cRegion);
 						cRegion.removeCandidate(candidat3);
+						getSudoku().updateCaseWithOneCandidate(cRegion);
 						cRegion.removeCandidate(candidat4);
+						getSudoku().updateCaseWithOneCandidate(cRegion);
 					}
 				}
 			}
@@ -305,13 +322,13 @@ public class NakedGroup extends MethodeAbstract implements Methode {
 	}
 
 	private List<Case> lookForTripletCandidatesRow(final int candidat1, final int candidat2, final int candidat3,
-			final int row) {
+					final int row) {
 		LogUtils.logEnteringMethod(LOG, Level.INFO, getClass().getSimpleName(), "lookForTripletCandidatesRow");
 		return lookForTripletsCandidates(candidat1, candidat2, candidat3, getSudoku().getCasesByRow(row));
 	}
 
 	private List<Case> lookForQuadrupletCandidatesRow(final int candidat1, final int candidat2, final int candidat3,
-			final int candidat4, final int row) {
+					final int candidat4, final int row) {
 		LogUtils.logEnteringMethod(LOG, Level.INFO, getClass().getSimpleName(), "lookForQuadrupletCandidatesRow");
 		return lookForQuadrupletsCandidates(candidat1, candidat2, candidat3, candidat4, getSudoku().getCasesByRow(row));
 	}
@@ -322,16 +339,16 @@ public class NakedGroup extends MethodeAbstract implements Methode {
 	}
 
 	private List<Case> lookForTripletCandidatesColumn(final int candidat1, final int candidat2, final int candidat3,
-			final int column) {
+					final int column) {
 		LogUtils.logEnteringMethod(LOG, Level.INFO, getClass().getSimpleName(), "lookForTripletCandidatesColumn");
 		return lookForTripletsCandidates(candidat1, candidat2, candidat3, getSudoku().getCasesByColumn(column));
 	}
 
 	private List<Case> lookForQuadrupletCandidatesColumn(final int candidat1, final int candidat2, final int candidat3,
-			final int candidat4, final int column) {
+					final int candidat4, final int column) {
 		LogUtils.logEnteringMethod(LOG, Level.INFO, getClass().getSimpleName(), "lookForQuadrupletCandidatesColumn");
 		return lookForQuadrupletsCandidates(candidat1, candidat2, candidat3, candidat4,
-				getSudoku().getCasesByColumn(column));
+						getSudoku().getCasesByColumn(column));
 	}
 
 	private List<Case> lookForPaireCandidatesRegion(final int candidat1, final int candidat2, final Region region) {
@@ -340,13 +357,13 @@ public class NakedGroup extends MethodeAbstract implements Methode {
 	}
 
 	private List<Case> lookForTripletCandidatesRegion(final int candidat1, final int candidat2, final int candidat3,
-			final Region region) {
+					final Region region) {
 		LogUtils.logEnteringMethod(LOG, Level.INFO, getClass().getSimpleName(), "lookForTripletCandidatesRegion");
 		return lookForTripletsCandidates(candidat1, candidat2, candidat3, region.getCases());
 	}
 
 	private List<Case> lookForQuadrupletCandidatesRegion(final int candidat1, final int candidat2, final int candidat3,
-			final int candidat4, final Region region) {
+					final int candidat4, final Region region) {
 		LogUtils.logEnteringMethod(LOG, Level.INFO, getClass().getSimpleName(), "lookForQuadrupletCandidatesRegion");
 		return lookForQuadrupletsCandidates(candidat1, candidat2, candidat3, candidat4, region.getCases());
 	}
@@ -381,7 +398,7 @@ public class NakedGroup extends MethodeAbstract implements Methode {
 	 * @return liste cases
 	 */
 	private List<Case> lookForTripletsCandidates(final int candidat1, final int candidat2, final int candidat3,
-			final Case[] cases) {
+					final Case[] cases) {
 		LogUtils.logEnteringMethod(LOG, Level.INFO, getClass().getSimpleName(), "lookForTripletsCandidates");
 		final List<Integer> candidates = new ArrayList<Integer>();
 		candidates.add(candidat1);
@@ -403,7 +420,7 @@ public class NakedGroup extends MethodeAbstract implements Methode {
 	 * @return liste cases
 	 */
 	private List<Case> lookForQuadrupletsCandidates(final int candidat1, final int candidat2, final int candidat3,
-			final int candidat4, final Case[] cases) {
+					final int candidat4, final Case[] cases) {
 		LogUtils.logEnteringMethod(LOG, Level.INFO, getClass().getSimpleName(), "lookForQuadrupletsCandidates");
 		final List<Integer> candidates = new ArrayList<Integer>();
 		candidates.add(candidat1);

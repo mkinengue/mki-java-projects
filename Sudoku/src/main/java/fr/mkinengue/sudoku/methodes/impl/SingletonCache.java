@@ -11,8 +11,8 @@ import fr.mkinengue.sudoku.methodes.Methode;
 import fr.mkinengue.sudoku.methodes.MethodeAbstract;
 
 /**
- * M�thode consistant � chercher dans une ligne, colonne ou r�gion donn�e pour chacun des nombres de la s�rie s'il n'a
- * qu'une seule possibilit�. Si tel est le cas, il est valoris� dans la case correspondante
+ * Méthode consistant à chercher dans une ligne, colonne ou région donnée pour chacun des nombres de la série s'il n'a
+ * qu'une seule possibilité. Si tel est le cas, il est valorisé dans la case correspondante
  */
 public class SingletonCache extends MethodeAbstract implements Methode {
 
@@ -37,7 +37,7 @@ public class SingletonCache extends MethodeAbstract implements Methode {
 
 	private void setUniqueCaseForRows() {
 		final int maxNb = getSudoku().getGrille().length;
-		for (int possible = 1; possible <= maxNb; possible++) {
+		for (Integer possible = 1; possible <= maxNb; possible++) {
 			for (int row = 0; row < maxNb; row++) {
 				setUniqueCaseWithPossibility(possible, getSudoku().getCasesByRow(row));
 			}
@@ -46,7 +46,7 @@ public class SingletonCache extends MethodeAbstract implements Methode {
 
 	private void setUniqueCaseForColumns() {
 		final int maxNb = getSudoku().getGrille().length;
-		for (int possible = 1; possible <= maxNb; possible++) {
+		for (Integer possible = 1; possible <= maxNb; possible++) {
 			for (int column = 0; column < maxNb; column++) {
 				setUniqueCaseWithPossibility(possible, getSudoku().getCasesByColumn(column));
 			}
@@ -56,7 +56,7 @@ public class SingletonCache extends MethodeAbstract implements Methode {
 	private void setUniqueCaseForRegions() {
 		final int maxNb = getSudoku().getGrille().length;
 		final Map<Case, Region> regionsByFirstCase = getSudoku().getRegionsByFirstCase();
-		for (int possible = 1; possible <= maxNb; possible++) {
+		for (Integer possible = 1; possible <= maxNb; possible++) {
 			for (final Region region : regionsByFirstCase.values()) {
 				setUniqueCaseWithPossibility(possible, region.getCases());
 			}
@@ -67,33 +67,26 @@ public class SingletonCache extends MethodeAbstract implements Methode {
 	 * Valorise si elle existe l'unique case contenant la possiblit� possible, pour toutes les cases de cases<br />
 	 * Ne fait rien si la case n'est pas trouv�e ou si plusieurs cases poss�dent cette possibilit�
 	 * 
-	 * @param candidat
-	 *            candidat � chercher
-	 * @param cases
-	 *            cases parmi lesquelles cherch�es
+	 * @param candidat candidat � chercher
+	 * @param cases cases parmi lesquelles cherch�es
 	 */
-	private void setUniqueCaseWithPossibility(final int candidat, final Case[] cases) {
+	private void setUniqueCaseWithPossibility(final Integer candidat, final Case[] cases) {
 		Case c = null;
-		boolean unique = false;
+		int nbOcc = 0;
 		for (final Case case1 : cases) {
-			if (case1.getCandidates().contains(candidat)) {
-				if (!unique) {
-					c = case1;
-					unique = true;
-				} else {
-					c = null;
-				}
+			if (case1.isEmpty() && case1.getCandidates().contains(candidat)) {
+				nbOcc++;
+				c = case1;
+			}
+
+			if (nbOcc >= 2) {
+				// Le nombre d'occurrences est déjà supérieur à 1, on arrête
+				break;
 			}
 		}
 
-		if (c != null) {
-			c.setValue(candidat);
-
-			// On remplit la map des occurrences des nombres
-			getSudoku().updateMapOccurrencesByNumber(c.getValue());
-
-			// On supprime la case de la liste des cases vides
-			getSudoku().getEmptyCases().remove(c);
+		if (nbOcc == 1) {
+			getSudoku().updateCaseWithOneCandidate(c);
 		}
 	}
 }
