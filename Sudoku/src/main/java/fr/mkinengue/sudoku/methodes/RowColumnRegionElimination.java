@@ -129,8 +129,6 @@ public abstract class RowColumnRegionElimination extends MethodeAbstract impleme
 				// ligne ou colonne extraite
 				reduceCandidate(currCase, otherCurrRowCol);
 			}
-
-			getSudoku().updateCaseWithOneCandidate(currCase);
 		}
 	}
 
@@ -172,14 +170,12 @@ public abstract class RowColumnRegionElimination extends MethodeAbstract impleme
 								+ " est vide mais n'a plus de candidats possibles");
 			}
 
-			getSudoku().updateCaseWithOneCandidate(currCase);
 			if (currCase.getCandidates().size() > 1) {
 				for (final Case c : region.getCases()) {
 					if (c.isEmpty() || c.equals(currCase)) {
 						continue;
 					} else if (currCase.getCandidates().contains(c.getValue())) {
 						currCase.removeCandidate(c.getValue());
-						getSudoku().updateCaseWithOneCandidate(currCase);
 					}
 				}
 			}

@@ -1,5 +1,8 @@
 package fr.mkinengue.sudoku.bean;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import fr.mkinengue.sudoku.exception.SudokuException;
 
 /**
@@ -68,6 +71,22 @@ public abstract class RowColumnAbstract {
 		} else {
 			throw new SudokuException("Type inconnu. Devrait être de type ligne ou colonne");
 		}
+	}
+
+	/**
+	 * Retourne la liste des cases vides de la ligne ou colonne<br />
+	 * Retourne une liste vide s'il n'y a aucune case vide dans la ligne ou colonne considérée
+	 * 
+	 * @return List&lt;Case&gt;
+	 */
+	public List<Case> getEmptyCases() {
+		final List<Case> emptyCases = new ArrayList<Case>();
+		for (final Case c : rowColumn) {
+			if (c.isEmpty()) {
+				emptyCases.add(c);
+			}
+		}
+		return emptyCases;
 	}
 
 	// /**
@@ -150,7 +169,7 @@ public abstract class RowColumnAbstract {
 			return false;
 		}
 		final Case[] oo = (Case[]) o;
-		return this.hashCode() == oo.hashCode();
+		return hashCode() == oo.hashCode();
 	}
 
 	/**

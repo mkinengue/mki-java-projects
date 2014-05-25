@@ -8,6 +8,7 @@ import java.util.Enumeration;
 import java.util.List;
 
 import fr.mkinengue.sudoku.bean.Case;
+import fr.mkinengue.sudoku.core.Sudoku;
 import fr.mkinengue.sudoku.exception.InvalidColumnException;
 import fr.mkinengue.sudoku.exception.InvalidRowException;
 import fr.mkinengue.sudoku.exception.SudokuException;
@@ -90,6 +91,52 @@ public class SudokuUtils {
 			colCases[i] = grille[i][column];
 		}
 		return colCases;
+	}
+
+	/**
+	 * Mets à jour la case en paramètre dans le cas où sa liste de candidats ne contient plus qu'un unique élément. La
+	 * case est valorisée avec le candidat, la liste des candidats vidée, la map du nombre d'occurrences des valeurs
+	 * contenues dans la grille incrémentée et la case currCase supprimée de la liste des cases vides de la grille. Les
+	 * listes des priorités ont été également mises à jour<br />
+	 * 
+	 * @param sudoku
+	 * @param currCase
+	 */
+	public static void updateCaseWithOneCandidate(Case currCase, Sudoku sudoku) {
+		currCase.setValue(currCase.getCandidates().get(0).intValue());
+
+		// On vide la liste des candidats de la case juste remplie
+		currCase.getCandidates().clear();
+
+		// Suppression du candidat dans tous les candidats des cases vides de la ligne
+		for (final Case c : sudoku.getCasesByRow(currCase.getRow())) {
+			if (c.isEmpty()) {
+				c.getCandidates().remove(currCase.getValue());
+			}
+		}
+
+		// Suppression du candidat dans tous les candidats des cases vides de la colonne
+		for (final Case c : sudoku.getCasesByColumn(currCase.getColumn())) {
+			if (c.isEmpty()) {
+				c.getCandidates().remove(currCase.getValue());
+			}
+		}
+
+		// Suppression du candidat dans tous les candidats des cases vides de la région
+		for (final Case c : sudoku.getRegionByCase(currCase).getCases()) {
+			if (c.isEmpty()) {
+				c.getCandidates().remove(currCase.getValue());
+			}
+		}
+
+		// On remplit la map des occurrences des nombres
+		sudoku.updateMapOccurrencesByNumber(currCase.getValue());
+
+		// On met à jour la liste des priorités
+		sudoku.updatePrioritiesByCase(currCase);
+
+		// On supprime la case de la liste des cases vides
+		sudoku.getEmptyCases().remove(currCase);
 	}
 
 	/**
