@@ -19,7 +19,6 @@ import fr.mkinengue.sudoku.exception.NotValidException;
 import fr.mkinengue.sudoku.exception.SudokuException;
 import fr.mkinengue.sudoku.logger.LogUtils;
 import fr.mkinengue.sudoku.methodes.Methode;
-import fr.mkinengue.sudoku.methodes.impl.NakedGroup;
 import fr.mkinengue.sudoku.utils.SudokuUtils;
 
 /**
@@ -88,7 +87,7 @@ public class Sudoku {
 		// TO_EXCLUDE.add(Singleton.class);
 		// TO_EXCLUDE.add(SingletonCache.class);
 		// TO_EXCLUDE.add(SingletonNu.class);
-		TO_EXCLUDE.add(NakedGroup.class);
+		// TO_EXCLUDE.add(NakedGroup.class);
 	}
 
 	/**
@@ -290,32 +289,6 @@ public class Sudoku {
 		final Case firstCaseRegion = regionOfChangedCase.getFirstCase();
 		priorityRegions.remove(firstCaseRegion);
 		priorityRegions.addFirst(firstCaseRegion);
-	}
-
-	/**
-	 * Mets à jour la case en paramètre dans le cas où sa liste de candidats ne contient plus qu'un unique élément. Dans
-	 * un tel cas, la case est valorisée avec le candidat, la liste des candidats vidée, la map du nombre d'occurrences
-	 * des valeurs contenues dans la grille incrémentée et la case currCase supprimée de la liste des cases vides de la
-	 * grille. Les listes des priorités ont été également mises à jour<br />
-	 * 
-	 * @param currCase
-	 */
-	public void updateCaseWithOneCandidate(Case currCase) {
-		if (currCase.getCandidates().size() == 1) {
-			currCase.setValue(currCase.getCandidates().get(0).intValue());
-
-			// On vide la liste des candidats de la case juste remplie
-			currCase.getCandidates().clear();
-
-			// On remplit la map des occurrences des nombres
-			updateMapOccurrencesByNumber(currCase.getValue());
-
-			// On met à jour la liste des priorités
-			updatePrioritiesByCase(currCase);
-
-			// On supprime la case de la liste des cases vides
-			getEmptyCases().remove(currCase);
-		}
 	}
 
 	/**

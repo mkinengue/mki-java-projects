@@ -145,10 +145,8 @@ public class IndirectElimination extends MethodeAbstract implements Methode {
 				continue;
 			}
 
-			getSudoku().updateCaseWithOneCandidate(c);
 			if (c.getCandidates().contains(candidat)) {
 				c.removeCandidate(candidat);
-				getSudoku().updateCaseWithOneCandidate(c);
 			}
 		}
 	}
@@ -253,10 +251,8 @@ public class IndirectElimination extends MethodeAbstract implements Methode {
 				continue;
 			}
 
-			getSudoku().updateCaseWithOneCandidate(c);
 			if (c.getCandidates().contains(candidat)) {
 				c.removeCandidate(candidat);
-				getSudoku().updateCaseWithOneCandidate(c);
 			}
 		}
 	}

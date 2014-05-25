@@ -9,10 +9,11 @@ import fr.mkinengue.sudoku.bean.Region;
 import fr.mkinengue.sudoku.core.Sudoku;
 import fr.mkinengue.sudoku.methodes.Methode;
 import fr.mkinengue.sudoku.methodes.MethodeAbstract;
+import fr.mkinengue.sudoku.utils.SudokuUtils;
 
 /**
- * Méthode consistant à chercher dans une ligne, colonne ou région donnée pour chacun des nombres de la série s'il n'a
- * qu'une seule possibilité. Si tel est le cas, il est valorisé dans la case correspondante
+ * Méthode consistant à chercher dans une ligne, colonne ou région donnée pour chacun des nombres de la série s'il
+ * n'apparaît qu'une fois en tant que possibilité. Si tel est le cas, il est valorisé dans la case correspondante
  */
 public class SingletonCache extends MethodeAbstract implements Methode {
 
@@ -64,11 +65,11 @@ public class SingletonCache extends MethodeAbstract implements Methode {
 	}
 
 	/**
-	 * Valorise si elle existe l'unique case contenant la possiblit� possible, pour toutes les cases de cases<br />
-	 * Ne fait rien si la case n'est pas trouv�e ou si plusieurs cases poss�dent cette possibilit�
+	 * Valorise si elle existe l'unique case contenant la possiblité "candidat", pour toutes les cases de cases<br />
+	 * Ne fait rien si la case n'est pas trouvée ou si plusieurs cases possèdent cette possibilité
 	 * 
-	 * @param candidat candidat � chercher
-	 * @param cases cases parmi lesquelles cherch�es
+	 * @param candidat candidat à chercher
+	 * @param cases cases parmi lesquelles cherchées
 	 */
 	private void setUniqueCaseWithPossibility(final Integer candidat, final Case[] cases) {
 		Case c = null;
@@ -80,13 +81,13 @@ public class SingletonCache extends MethodeAbstract implements Methode {
 			}
 
 			if (nbOcc >= 2) {
-				// Le nombre d'occurrences est déjà supérieur à 1, on arrête
+				// Le nombre d'occurrences du candidat dans les possibles est déjà supérieur à 1, on arrête
 				break;
 			}
 		}
 
 		if (nbOcc == 1) {
-			getSudoku().updateCaseWithOneCandidate(c);
+			SudokuUtils.updateCaseWithOneCandidate(c, getSudoku());
 		}
 	}
 }
