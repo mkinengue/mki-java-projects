@@ -303,17 +303,13 @@ public class Sudoku {
 	public boolean solve() {
 		LogUtils.logEnteringMethod(LOG, Level.INFO, getClass().getSimpleName(), "solve");
 		final long debut = System.currentTimeMillis();
-		// Réduction de la grille avant de commencer
-		// reduceCaseByCase();
-		int cptExec = 0;
-		while (!isFull() && cptExec < MAX_ITER_TO_SOLVE) {
-			for (final Methode methode : methodes) {
-				methode.execute();
-			}
+		int cptStep = 0;
+		while (!isFull() && cptStep < MAX_ITER_TO_SOLVE) {
+			step();
 
-			cptExec++;
-			if (cptExec % 100 == 0) {
-				LOG.log(Level.INFO, "Fin itération {0}", cptExec);
+			cptStep++;
+			if (cptStep % 100 == 0) {
+				LOG.log(Level.INFO, "Fin itération {0}", cptStep);
 			}
 		}
 
@@ -321,10 +317,24 @@ public class Sudoku {
 			throw new NotValidException("La grille a été remplie mais n'est pas valide");
 		}
 
-		// LogUtils.logExitingMethod(level, className, methodName, start)
 		LOG.log(Level.INFO, "Fin de tentative de résolution en {0} ms après {1} itérations",
-						new Object[] { System.currentTimeMillis() - debut, cptExec });
+						new Object[] { System.currentTimeMillis() - debut, cptStep });
 		return isFull();
+	}
+
+	/**
+	 * Méthode d'éxécution d'une étape de résolution du Sudoku. Consiste en l'exécution successive de toutes les
+	 * méthodes de résolution définies une seule fois chacune, uniquement si le Sudoku n'est pas déjà plein
+	 */
+	public void step() {
+		LogUtils.logEnteringMethod(LOG, Level.INFO, getClass().getSimpleName(), "step");
+		final long debut = System.currentTimeMillis();
+		if (!isFull()) {
+			for (final Methode methode : methodes) {
+				methode.execute();
+			}
+		}
+		LOG.log(Level.INFO, "Fin d'exécution de step en {0} ms", new Object[] { System.currentTimeMillis() - debut });
 	}
 
 	/**
