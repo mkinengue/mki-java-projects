@@ -63,7 +63,7 @@ public class CaseByCaseElimination extends MethodeAbstract implements Methode {
 					if (cc.isEmpty() || cc.equals(c)) {
 						continue;
 					}
-					caseChanged = caseChanged || c.removeCandidate(cc.getValue());
+					caseChanged = c.removeCandidate(cc.getValue()) || caseChanged;
 				}
 
 				// Elimination sur la ligne
@@ -71,7 +71,7 @@ public class CaseByCaseElimination extends MethodeAbstract implements Methode {
 					if (cc.isEmpty() || cc.equals(c)) {
 						continue;
 					}
-					caseChanged = caseChanged || c.removeCandidate(cc.getValue());
+					caseChanged = c.removeCandidate(cc.getValue()) || caseChanged;
 				}
 
 				// Elimination sur la colonne
@@ -79,7 +79,7 @@ public class CaseByCaseElimination extends MethodeAbstract implements Methode {
 					if (cc.isEmpty() || cc.equals(c)) {
 						continue;
 					}
-					caseChanged = caseChanged || c.removeCandidate(cc.getValue());
+					caseChanged = c.removeCandidate(cc.getValue()) || caseChanged;
 				}
 
 				// Mise à jour du Sudoku si la case a changé
@@ -87,95 +87,6 @@ public class CaseByCaseElimination extends MethodeAbstract implements Methode {
 			}
 		}
 	}
-
-	/**
-	 * Méthode de réduction consistant à parcourir la grille de Sudoku case par case et à réduire les cases vides au fur
-	 * et à mesure
-	 */
-	// private void reduceCaseByCase() {
-	// for (final Case[] rows : getSudoku().getGrille()) {
-	// for (final Case c : rows) {
-	// boolean changed = false;
-	//
-	// // Mise à jour avec focus sur la ligne
-	// changed = changed || reduceCandidatesByRow(c);
-	//
-	// // Mise à jour avec focus sur la colonne
-	// changed = changed || reduceCandidatesByColumn(c);
-	//
-	// // Mise à jour avec focus sur la région
-	// changed = changed || reduceCandidatesByRegion(c);
-	//
-	// // Mise à jour du Sudoku si la case a changé
-	// updateSudoku(changed, c);
-	// }
-	// }
-	// }
-
-	/**
-	 * Réduit la liste des candidats de la case c avec focus sur la ligne correspondante
-	 * 
-	 * @param Case c
-	 * @return boolean
-	 */
-	// private boolean reduceCandidatesByRow(final Case c) {
-	// boolean changed = false;
-	// // Réduction de la case sur la ligne
-	// final Row row = getSudoku().getRowsList().get(c.getRow());
-	// for (final Case cRow : row.getRow()) {
-	// if (c.equals(cRow)) {
-	// continue;
-	// }
-	// if (!cRow.isEmpty()) {
-	// // Case non vide, on retire sa valeur de la liste des candidats de la case en cours d'analyse
-	// changed = changed || c.removeCandidate(cRow.getValue());
-	// }
-	// }
-	// return changed;
-	// }
-
-	/**
-	 * Réduit la liste des candidats de la case c avec focus sur la colonne correspondante
-	 * 
-	 * @param Case c
-	 * @return boolean
-	 */
-	// private boolean reduceCandidatesByColumn(final Case c) {
-	// boolean changed = false;
-	// // Réduction de la case sur la ligne
-	// final Column column = getSudoku().getColumnsList().get(c.getColumn());
-	// for (final Case cCol : column.getColumn()) {
-	// if (c.equals(cCol)) {
-	// continue;
-	// }
-	// if (!cCol.isEmpty()) {
-	// // Case non vide, on retire sa valeur de la liste des candidats de la case en cours d'analyse
-	// changed = changed || c.removeCandidate(cCol.getValue());
-	// }
-	// }
-	// return changed;
-	// }
-
-	/**
-	 * Réduit la liste des candidats de la case c avec focus sur la région correspondante
-	 * 
-	 * @param Case c
-	 * @return boolean
-	 */
-	// private boolean reduceCandidatesByRegion(final Case c) {
-	// boolean changed = false;
-	// final Region region = getSudoku().getRegionByCase(c);
-	// for (final Case cReg : region.getCases()) {
-	// if (c.equals(cReg)) {
-	// continue;
-	// }
-	// if (!cReg.isEmpty()) {
-	// // Case non vide, on retire sa valeur de la liste des candidats de la case en cours d'analyse
-	// changed = changed || c.removeCandidate(cReg.getValue());
-	// }
-	// }
-	// return changed;
-	// }
 
 	/**
 	 * Mise à jour de la grille du Sudoku en mettant à jour la liste des priorités et la map des occurrences des nombres

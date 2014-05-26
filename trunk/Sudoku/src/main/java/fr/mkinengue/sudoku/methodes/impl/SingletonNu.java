@@ -36,7 +36,7 @@ public class SingletonNu extends MethodeAbstract implements Methode {
 		final Case[][] grille = getSudoku().getGrille();
 		for (final Case[] cc : grille) {
 			for (final Case c : cc) {
-				if (c.isEmpty() && c.getCandidates().size() == 1) {
+				if (c.isEmpty()) {
 					SudokuUtils.updateCaseWithOneCandidate(c, getSudoku());
 				}
 			}

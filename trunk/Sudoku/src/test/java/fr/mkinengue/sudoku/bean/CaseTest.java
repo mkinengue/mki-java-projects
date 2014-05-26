@@ -8,8 +8,6 @@ import junit.framework.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
-import fr.mkinengue.sudoku.bean.Case;
-
 /**
  * @author mkinengue<br />
  *         Classe de test du bean Case
@@ -163,12 +161,19 @@ public class CaseTest {
 	@Test
 	public void testRemoveCandidates() {
 		final Case c = new Case(Constantes.ROW, Constantes.COL, null, Constantes.MAX_VAL);
-		Assert.assertNotNull("La liste des candidats n'a pas été initialisée", c.getCandidates());
-		Assert.assertTrue("La liste des candidats aurait dû être vide", !c.getCandidates().isEmpty());
+		org.junit.Assert.assertNotNull("La liste des candidats n'a pas été initialisée", c.getCandidates());
+		org.junit.Assert.assertTrue("La liste des candidats aurait dû être vide", !c.getCandidates().isEmpty());
 		final Integer val = Integer.valueOf(6);
-		Assert.assertTrue(c.getCandidates().contains(val));
+		org.junit.Assert.assertTrue(c.getCandidates().contains(val));
 		c.removeCandidate(val);
-		Assert.assertTrue(!c.getCandidates().contains(val));
+		org.junit.Assert.assertTrue(!c.getCandidates().contains(val));
+		org.junit.Assert.assertEquals(Constantes.MAX_VAL - 1, c.getCandidates().size());
+		c.removeCandidate(val);
+		org.junit.Assert.assertEquals(Constantes.MAX_VAL - 1, c.getCandidates().size());
+		final Integer val2 = c.getCandidates().get(6);
+		org.junit.Assert.assertEquals(c.getCandidates().get(6), val2);
+		c.getCandidates().remove(6);
+		org.junit.Assert.assertNotEquals(c.getCandidates().get(6), val2);
 	}
 
 	/**
@@ -179,25 +184,25 @@ public class CaseTest {
 	@Test
 	public void testEquals() {
 		Case c2 = new Case(Constantes.ROW, Constantes.COL, null, Constantes.MAX_VAL);
-		Assert.assertEquals(c, c2);
+		org.junit.Assert.assertEquals(c, c2);
 
 		c2 = new Case(Constantes.ROW, Constantes.COL, Constantes.VAL, Constantes.MAX_VAL);
-		Assert.assertEquals(c, c2);
+		org.junit.Assert.assertEquals(c, c2);
 
 		c2 = new Case(Constantes.ROW, Constantes.COL, Constantes.VAL, Constantes.MAX_VAL);
-		Assert.assertEquals(c, c2);
+		org.junit.Assert.assertEquals(c, c2);
 
 		c2 = new Case(Constantes.ROW, Constantes.COL, Constantes.VAL, Constantes.MAX_VAL + 1);
-		Assert.assertEquals(c, c2);
+		org.junit.Assert.assertEquals(c, c2);
 
 		c2 = new Case(Constantes.ROW + 1, Constantes.COL, Constantes.VAL, Constantes.MAX_VAL);
-		Assert.assertFalse(c.equals(c2));
+		org.junit.Assert.assertFalse(c.equals(c2));
 
 		c2 = new Case(Constantes.ROW, Constantes.COL + 1, Constantes.VAL, Constantes.MAX_VAL);
-		Assert.assertFalse(c.equals(c2));
+		org.junit.Assert.assertFalse(c.equals(c2));
 
-		Assert.assertFalse(c.equals(Integer.valueOf(3)));
+		org.junit.Assert.assertFalse(c.equals(Integer.valueOf(3)));
 
-		Assert.assertFalse(c.equals(null));
+		org.junit.Assert.assertFalse(c.equals(null));
 	}
 }
