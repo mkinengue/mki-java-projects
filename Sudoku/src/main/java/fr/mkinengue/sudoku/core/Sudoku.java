@@ -32,7 +32,7 @@ public class Sudoku {
 		LOG.setLevel(Level.FINEST);
 	}
 
-	private static final int MAX_ITER_TO_SOLVE = 1000;
+	private static final int MAX_ITER_TO_SOLVE = 10000;
 
 	private final int size;
 

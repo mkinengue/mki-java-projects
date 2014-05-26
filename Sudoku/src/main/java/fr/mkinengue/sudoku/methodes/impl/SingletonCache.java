@@ -1,5 +1,8 @@
 package fr.mkinengue.sudoku.methodes.impl;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -36,58 +39,72 @@ public class SingletonCache extends MethodeAbstract implements Methode {
 		LOG.log(Level.INFO, "Méthode SingletonCache exécutée en {0} ms", System.currentTimeMillis() - debut);
 	}
 
+	/**
+	 * Cherche pour chaque ligne s'il existe une case vide pour laquelle et uniquement pour laquelle appparaît un
+	 * candidat qui est par conséquent utilisé pour valoriser la case
+	 */
 	private void setUniqueCaseForRows() {
 		final int maxNb = getSudoku().getGrille().length;
-		for (Integer possible = 1; possible <= maxNb; possible++) {
-			for (int row = 0; row < maxNb; row++) {
-				setUniqueCaseWithPossibility(possible, getSudoku().getCasesByRow(row));
-			}
-		}
-	}
-
-	private void setUniqueCaseForColumns() {
-		final int maxNb = getSudoku().getGrille().length;
-		for (Integer possible = 1; possible <= maxNb; possible++) {
-			for (int column = 0; column < maxNb; column++) {
-				setUniqueCaseWithPossibility(possible, getSudoku().getCasesByColumn(column));
-			}
-		}
-	}
-
-	private void setUniqueCaseForRegions() {
-		final int maxNb = getSudoku().getGrille().length;
-		final Map<Case, Region> regionsByFirstCase = getSudoku().getRegionsByFirstCase();
-		for (Integer possible = 1; possible <= maxNb; possible++) {
-			for (final Region region : regionsByFirstCase.values()) {
-				setUniqueCaseWithPossibility(possible, region.getCases());
-			}
+		for (int row = 0; row < maxNb; row++) {
+			setCaseContainingUniqueCandidate(getSudoku().getCasesByRow(row));
 		}
 	}
 
 	/**
-	 * Valorise si elle existe l'unique case contenant la possiblité "candidat", pour toutes les cases de cases<br />
-	 * Ne fait rien si la case n'est pas trouvée ou si plusieurs cases possèdent cette possibilité
-	 * 
-	 * @param candidat candidat à chercher
-	 * @param cases cases parmi lesquelles cherchées
+	 * Cherche pour chaque colonne s'il existe une case vide pour laquelle et uniquement pour laquelle appparaît un
+	 * candidat qui est par conséquent utilisé pour valoriser la case
 	 */
-	private void setUniqueCaseWithPossibility(final Integer candidat, final Case[] cases) {
-		Case c = null;
-		int nbOcc = 0;
-		for (final Case case1 : cases) {
-			if (case1.isEmpty() && case1.getCandidates().contains(candidat)) {
-				nbOcc++;
-				c = case1;
-			}
+	private void setUniqueCaseForColumns() {
+		final int maxNb = getSudoku().getGrille().length;
+		for (int column = 0; column < maxNb; column++) {
+			setCaseContainingUniqueCandidate(getSudoku().getCasesByColumn(column));
+		}
+	}
 
-			if (nbOcc >= 2) {
-				// Le nombre d'occurrences du candidat dans les possibles est déjà supérieur à 1, on arrête
-				break;
+	/**
+	 * Cherche pour chaque région s'il existe une case vide pour laquelle et uniquement pour laquelle appparaît un
+	 * candidat qui est par conséquent utilisé pour valoriser la case
+	 */
+	private void setUniqueCaseForRegions() {
+		final Map<Case, Region> regionsByFirstCase = getSudoku().getRegionsByFirstCase();
+		for (final Region region : regionsByFirstCase.values()) {
+			setCaseContainingUniqueCandidate(region.getCases());
+		}
+	}
+
+	/**
+	 * Recherche dans la liste des cases en paramètres s'il existe une case dans laquelle et uniquement dans laquelle
+	 * apparaît un candidat donné : si une telle case existe, le candidat est mis à jour dans la case et le Sudoku mis à
+	 * jour en conséquence. <br />
+	 * La méthode consiste à parcourir case par case et, construire une map de candidats associés à la liste des cases
+	 * les contenant. Si une liste de cases contient un unique élément pour un candidat donné, alors ce candidat
+	 * apparaît uniquement dans cette case pour le groupe de cases en paramètre et la condition est remplie
+	 * 
+	 * @param cases
+	 */
+	private void setCaseContainingUniqueCandidate(final Case[] cases) {
+		final Map<Integer, List<Case>> mapCasesContainingCandidate = new HashMap<Integer, List<Case>>();
+		for (final Case c : cases) {
+			if (!c.isEmpty()) {
+				continue;
+			}
+			for (final Integer cand : c.getCandidates()) {
+				if (mapCasesContainingCandidate.get(cand) == null) {
+					mapCasesContainingCandidate.put(cand, new ArrayList<Case>());
+				}
+				mapCasesContainingCandidate.get(cand).add(c);
 			}
 		}
 
-		if (nbOcc == 1) {
-			SudokuUtils.updateCaseWithOneCandidate(c, getSudoku());
+		// On parcourt la map des cases par candidats : si un candidat n'est présent que dans une case, on valorise la
+		// case avec le candidat
+		for (final Integer cand : mapCasesContainingCandidate.keySet()) {
+			final List<Case> casesContainingCand = mapCasesContainingCandidate.get(cand);
+			if (casesContainingCand.size() == 1) {
+				// Une unique case dans le groupe des cases en paramètre contient le candidat en cours, on valorise la
+				// case avec le candidat
+				SudokuUtils.updateCaseWithValue(Integer.valueOf(cand), casesContainingCand.get(0), getSudoku());
+			}
 		}
 	}
 }

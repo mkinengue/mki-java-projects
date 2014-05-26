@@ -8,6 +8,9 @@ import java.util.Enumeration;
 import java.util.List;
 
 import fr.mkinengue.sudoku.bean.Case;
+import fr.mkinengue.sudoku.bean.Column;
+import fr.mkinengue.sudoku.bean.Row;
+import fr.mkinengue.sudoku.bean.RowColumnAbstract;
 import fr.mkinengue.sudoku.core.Sudoku;
 import fr.mkinengue.sudoku.exception.InvalidColumnException;
 import fr.mkinengue.sudoku.exception.InvalidRowException;
@@ -94,6 +97,54 @@ public class SudokuUtils {
 	}
 
 	/**
+	 * Mets à jour la case en paramètre (2ème) avec la valeur non nulle donnée par le 1er paramètre dans le Sudoku donné
+	 * par le 3ème paramètre. La Suite à la mise à jour de la case, la map du nombre d'occurrences des valeurs contenues
+	 * dans la grille est incrémentée et la case currCase supprimée de la liste des cases vides de la grille. Les listes
+	 * des priorités sont également mises à jour<br />
+	 * Dans le cas où la valeur est nulle, aucune action n'est exécutée
+	 * 
+	 * @param value
+	 * @param sudoku
+	 * @param currCase
+	 */
+	public static void updateCaseWithValue(Integer value, Case currCase, Sudoku sudoku) {
+		if (value == null) {
+			return;
+		}
+
+		currCase.setValue(value);
+		// Suppression du candidat dans tous les candidats des cases vides de la ligne
+		for (final Case c : sudoku.getCasesByRow(currCase.getRow())) {
+			if (c.isEmpty()) {
+				c.removeCandidate(Integer.valueOf(currCase.getValue()));
+			}
+		}
+
+		// Suppression du candidat dans tous les candidats des cases vides de la colonne
+		for (final Case c : sudoku.getCasesByColumn(currCase.getColumn())) {
+			if (c.isEmpty()) {
+				c.removeCandidate(Integer.valueOf(currCase.getValue()));
+			}
+		}
+
+		// Suppression du candidat dans tous les candidats des cases vides de la région
+		for (final Case c : sudoku.getRegionByCase(currCase).getCases()) {
+			if (c.isEmpty()) {
+				c.removeCandidate(Integer.valueOf(currCase.getValue()));
+			}
+		}
+
+		// On remplit la map des occurrences des nombres
+		sudoku.updateMapOccurrencesByNumber(Integer.valueOf(currCase.getValue()));
+
+		// On met à jour la liste des priorités
+		sudoku.updatePrioritiesByCase(currCase);
+
+		// On supprime la case de la liste des cases vides
+		sudoku.getEmptyCases().remove(currCase);
+	}
+
+	/**
 	 * Mets à jour la case en paramètre dans le cas où sa liste de candidats ne contient plus qu'un unique élément. La
 	 * case est valorisée avec le candidat, la liste des candidats vidée, la map du nombre d'occurrences des valeurs
 	 * contenues dans la grille incrémentée et la case currCase supprimée de la liste des cases vides de la grille. Les
@@ -103,40 +154,12 @@ public class SudokuUtils {
 	 * @param currCase
 	 */
 	public static void updateCaseWithOneCandidate(Case currCase, Sudoku sudoku) {
-		currCase.setValue(currCase.getCandidates().get(0).intValue());
-
-		// On vide la liste des candidats de la case juste remplie
-		currCase.getCandidates().clear();
-
-		// Suppression du candidat dans tous les candidats des cases vides de la ligne
-		for (final Case c : sudoku.getCasesByRow(currCase.getRow())) {
-			if (c.isEmpty()) {
-				c.getCandidates().remove(currCase.getValue());
-			}
+		if (currCase.getCandidates().size() != 1) {
+			return;
 		}
 
-		// Suppression du candidat dans tous les candidats des cases vides de la colonne
-		for (final Case c : sudoku.getCasesByColumn(currCase.getColumn())) {
-			if (c.isEmpty()) {
-				c.getCandidates().remove(currCase.getValue());
-			}
-		}
-
-		// Suppression du candidat dans tous les candidats des cases vides de la région
-		for (final Case c : sudoku.getRegionByCase(currCase).getCases()) {
-			if (c.isEmpty()) {
-				c.getCandidates().remove(currCase.getValue());
-			}
-		}
-
-		// On remplit la map des occurrences des nombres
-		sudoku.updateMapOccurrencesByNumber(currCase.getValue());
-
-		// On met à jour la liste des priorités
-		sudoku.updatePrioritiesByCase(currCase);
-
-		// On supprime la case de la liste des cases vides
-		sudoku.getEmptyCases().remove(currCase);
+		// Mise à jour de la case avec l'unique candidat
+		updateCaseWithValue(currCase.getCandidates().get(0), currCase, sudoku);
 	}
 
 	/**
@@ -195,5 +218,39 @@ public class SudokuUtils {
 			}
 		}
 		return classes;
+	}
+
+	/**
+	 * Copie (de référence) les lignes de la liste en paramètre, dans une nouvelle liste de type RowColumnAbstract
+	 * 
+	 * @param rows
+	 * @return List&lt;RowColumnAbstract&gt;
+	 */
+	public static List<RowColumnAbstract> listRow2ListRowColAbstract(List<Row> rows) {
+		if (rows == null) {
+			return null;
+		}
+		final List<RowColumnAbstract> listAbs = new ArrayList<RowColumnAbstract>();
+		for (final Row row : rows) {
+			listAbs.add(row);
+		}
+		return listAbs;
+	}
+
+	/**
+	 * Copie (de référence) les colonnes de la liste en paramètre, dans une nouvelle liste de type RowColumnAbstract
+	 * 
+	 * @param cols
+	 * @return List&lt;RowColumnAbstract&gt;
+	 */
+	public static List<RowColumnAbstract> listColumn2ListRowColAbstract(List<Column> cols) {
+		if (cols == null) {
+			return null;
+		}
+		final List<RowColumnAbstract> listAbs = new ArrayList<RowColumnAbstract>();
+		for (final Column col : cols) {
+			listAbs.add(col);
+		}
+		return listAbs;
 	}
 }

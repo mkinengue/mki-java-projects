@@ -219,6 +219,21 @@ public class Region {
 	}
 
 	/**
+	 * Retourne la liste des cases vides de la région
+	 * 
+	 * @return List&lt;Case&gt;
+	 */
+	public List<Case> getEmptyCases() {
+		final List<Case> emptyCases = new ArrayList<Case>();
+		for (final Case c : region) {
+			if (c.isEmpty()) {
+				emptyCases.add(c);
+			}
+		}
+		return emptyCases;
+	}
+
+	/**
 	 * {@inheritDoc}
 	 */
 	@Override

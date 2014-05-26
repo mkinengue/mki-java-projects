@@ -174,9 +174,8 @@ public abstract class RowColumnRegionElimination extends MethodeAbstract impleme
 				for (final Case c : region.getCases()) {
 					if (c.isEmpty() || c.equals(currCase)) {
 						continue;
-					} else if (currCase.getCandidates().contains(c.getValue())) {
-						currCase.removeCandidate(c.getValue());
 					}
+					currCase.removeCandidate(c.getValue());
 				}
 			}
 		}
