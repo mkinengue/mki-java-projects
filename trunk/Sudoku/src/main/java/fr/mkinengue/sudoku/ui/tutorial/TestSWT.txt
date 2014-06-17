@@ -1,0 +1,51 @@
+package fr.mkinengue.sudoku.ui;
+
+import java.awt.Button;
+import java.awt.GridLayout;
+import java.awt.Label;
+
+public class TestSWT {
+
+	public static void main(String[] args) {
+
+		final Display display = new Display();
+		final Shell shell = new Shell(display);
+
+		final GridLayout gridLayout = new GridLayout();
+		gridLayout.numColumns = 2;
+		gridLayout.makeColumnsEqualWidth = true;
+
+		shell.setLayout(gridLayout);
+
+		final Button b1 = new Button(shell, SWT.PUSH);
+		b1.setText("button 1");
+		b1.setLayoutData(new GridData(GridData.VERTICAL_ALIGN_BEGINNING));
+
+		final Label l2 = new Label(shell, SWT.PUSH);
+		l2.setText("button 2");
+		final GridData gridData = new GridData(GridData.VERTICAL_ALIGN_END);
+		l2.setLayoutData(gridData);
+
+		final Button button3 = new Button(shell, SWT.PUSH);
+		button3.setText("button 3");
+
+		button3.addSelectionListener(new SelectionListener() {
+			@Override
+			public void widgetDefaultSelected(SelectionEvent arg0) {
+				// TODO Auto-generated method stub
+				l2.setText("clicked");
+			}
+
+			@Override
+			public void widgetSelected(SelectionEvent arg0) {
+				// TODO Auto-generated method stub
+				l2.setText("clicked");
+			}
+		});
+
+		button3.setLayoutData(new GridData(GridData.VERTICAL_ALIGN_FILL));
+
+		shell.pack();
+		shell.open();
+	}
+}
