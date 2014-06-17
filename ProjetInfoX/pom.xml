@@ -4,16 +4,108 @@
   <artifactId>ProjetInfoX</artifactId>
   <version>0.0.1-SNAPSHOT</version>
   <build>
-    <sourceDirectory>src</sourceDirectory>
-    <plugins>
-      <plugin>
-        <artifactId>maven-compiler-plugin</artifactId>
-        <version>3.0</version>
-        <configuration>
-          <source>1.7</source>
-          <target>1.7</target>
-        </configuration>
-      </plugin>
-    </plugins>
-  </build>
+		<!-- courant -->
+		<resources>
+			<!-- Add XML Files to the jar -->
+			<resource>
+				<directory>src/main/java</directory>
+				<filtering>false</filtering>
+				<includes>
+					<include>**/*.properties</include>
+					<include>**/*.xml</include>
+				</includes>
+			</resource>
+
+			<!-- copy properties file to the build directory -->
+			<resource>
+				<directory>src/main/resources</directory>
+				<filtering>false</filtering>
+				<includes>
+					<include>**/*.properties</include>
+					<include>**/*.xml</include>
+				</includes>
+				<targetPath>
+					${service-properties}
+				</targetPath>
+			</resource>
+		</resources>
+		<testResources>
+			<testResource>
+				<directory>src/main/resources</directory>
+				<includes>
+					<include>**</include>
+				</includes>
+			</testResource>
+			<testResource>
+				<directory>src/test/resources</directory>
+				<includes>
+					<include>**</include>
+				</includes>
+			</testResource>
+		</testResources>
+		<plugins>
+			<!-- parent -->
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-compiler-plugin</artifactId>
+				<version>3.0</version>
+				<configuration>
+					<source>1.6</source>
+					<target>1.6</target>
+					<encoding>UTF-8</encoding>
+				</configuration>
+			</plugin>
+			
+			<!-- courant -->
+			<!-- 
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-jar-plugin</artifactId>
+				<executions>
+					<execution>
+						<id>make-a-test-jar</id>
+						<configuration>
+							<classifier>test-jar</classifier>
+							<classesDirectory>target/test-classes</classesDirectory>
+							<includes>
+								<include>**/*</include>
+							</includes>
+						</configuration>
+						<phase>package</phase>
+						<goals>
+							<goal>jar</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+			-->
+			<!-- parent -->
+			<!-- 
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-surefire-plugin</artifactId>
+				<configuration>
+					<argLine>-Xms256m -Xmx640m -XX:MaxPermSize=384m</argLine>
+					<testFailureIgnore>true</testFailureIgnore>
+					 <useSystemClassLoader>false</useSystemClassLoader> 
+					<skip>false</skip>
+				</configuration>
+			</plugin>
+			-->
+			<!--<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-release-plugin</artifactId>
+				<version>2.2.1</version>
+				<configuration>
+					<tagWorkingDirectory>${basedir}/..</tagWorkingDirectory>
+					<tagBase>svn://svnzone/reposnewers/tags</tagBase>
+					<tagNameFormat>LIV_SPRINT@{version}</tagNameFormat>
+					<autoVersionSubmodules>true</autoVersionSubmodules>
+					<preparationGoals>clean install package</preparationGoals>
+					<username>newers</username>
+          			<password>newers</password>
+				</configuration>
+			</plugin>-->
+		</plugins>
+	</build>
 </project>
