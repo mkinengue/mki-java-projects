@@ -168,6 +168,8 @@ public class ImpotsCalculator {
 			fillAnnee2011();
 		} else if (annee == 2012) {
 			fillAnnee2012();
+		} else if (annee == 2015) {
+			fillAnnee2015();
 		}
 
 		// Récupérer le barême
@@ -334,12 +336,13 @@ public class ImpotsCalculator {
 
 	public static void main(final String[] args) {
 		final int annee = 2015;
+		// final float revenu = 66656f;
 		final float revenu = 36743f;
 		final float part = 1f;
 		// part=2f->6223.58 / part=2.5f->4751.725(1 ou 2 enf) / part=3f->4082.0703 (3enf)
 		// part=3.5f->3412.43 (4enf) / part=4f->2742.76 (5enf) / part=4.5f->2073.105 (6enf)
 		final float impot = getImpotsValue(annee, revenu, part, null);
-		System.out.println("impôt de l'année " + annee + " pour le revenu " + revenu + " avec quotiont familial "
+		System.out.println("Impôt de l'année " + annee + " pour le revenu " + revenu + " avec quotiont familial "
 						+ part + " est de : " + impot);
 	}
 }
