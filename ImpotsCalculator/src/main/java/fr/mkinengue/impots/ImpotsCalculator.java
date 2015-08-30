@@ -11,20 +11,20 @@ import org.apache.commons.collections.map.MultiKeyMap;
 import fr.mkinengue.impots.bean.Tranche;
 
 /**
- * Calcule l'impÃ´t sur le revenu en fonction des tranches d'une annÃ©e donnÃ©e
+ * Calcule l'impôt sur le revenu en fonction des tranches d'une année donnée
  * 
  * @author mkinengue
  */
 public class ImpotsCalculator {
 
 	/**
-	 * Contient pour une annÃ©e donnÃ©e les tranche min, max d'une tra nche d'impÃ´t donnÃ©e ainsi que le taux d'imposition
+	 * Contient pour une année donnée les tranche min, max d'une tranche d'impôt donnée ainsi que le taux d'imposition
 	 * pour cette tranche
 	 */
 	private static MultiKeyMap BAREME_PAR_ANNEE = new MultiKeyMap();
 
 	/**
-	 * Supprime le barÃªme de l'annÃ©e donnÃ©e en paramÃ¨tre ou alors l'ensemble du barÃªme si l'annÃ©e fournie est nulle
+	 * Supprime le barême de l'année donnée en paramètre ou alors l'ensemble du barême si l'année fournie est nulle
 	 * 
 	 * @param annee
 	 */
@@ -37,13 +37,13 @@ public class ImpotsCalculator {
 	}
 
 	/**
-	 * Construit le barÃªme des impÃ´ts de l'annÃ©e 2008
+	 * Construit le barême des impôts de l'année 2008
 	 */
 	public static void fillAnnee2008() {
-		// On supprime l'annÃ©e 2008
+		// On supprime l'année 2008
 		clearBaremeParAnnee(2008);
 
-		// On insÃ¨re l'annÃ©e 2008
+		// On insère l'année 2008
 		BAREME_PAR_ANNEE.put(2008, 0, 5687, 0f);
 		BAREME_PAR_ANNEE.put(2008, 5688, 11344, 0.055f);
 		BAREME_PAR_ANNEE.put(2008, 11345, 25195, 0.14f);
@@ -52,13 +52,13 @@ public class ImpotsCalculator {
 	}
 
 	/**
-	 * Construit le barÃªme des impÃ´ts de l'annÃ©e 2009
+	 * Construit le barême des impôts de l'année 2009
 	 */
 	public static void fillAnnee2009() {
-		// On supprime l'annÃ©e 2009
+		// On supprime l'année 2009
 		clearBaremeParAnnee(2009);
 
-		// On insÃ¨re l'annÃ©e 2009
+		// On insère l'année 2009
 		BAREME_PAR_ANNEE.put(2009, 0, 5853, 0f);
 		BAREME_PAR_ANNEE.put(2009, 5854, 11674, 0.055f);
 		BAREME_PAR_ANNEE.put(2009, 11675, 25927, 0.14f);
@@ -67,13 +67,13 @@ public class ImpotsCalculator {
 	}
 
 	/**
-	 * Construit le barÃªme des impÃ´ts de l'annÃ©e 2010
+	 * Construit le barême des impôts de l'année 2010
 	 */
 	public static void fillAnnee2010() {
-		// On supprime l'annÃ©e 2010
+		// On supprime l'année 2010
 		clearBaremeParAnnee(2010);
 
-		// On insÃ¨re l'annÃ©e 2010
+		// On insère l'année 2010
 		BAREME_PAR_ANNEE.put(2010, 0, 5875, 0f);
 		BAREME_PAR_ANNEE.put(2010, 5876, 11720, 0.055f);
 		BAREME_PAR_ANNEE.put(2010, 11721, 26030, 0.14f);
@@ -82,13 +82,13 @@ public class ImpotsCalculator {
 	}
 
 	/**
-	 * Construit le barÃªme des impÃ´ts de l'annÃ©e 2011
+	 * Construit le barême des impôts de l'année 2011
 	 */
 	public static void fillAnnee2011() {
-		// On supprime l'annÃ©e 2011
+		// On supprime l'année 2011
 		clearBaremeParAnnee(2011);
 
-		// On insÃ¨re l'annÃ©e 2011
+		// On insère l'année 2011
 		BAREME_PAR_ANNEE.put(2011, 0, 5963, 0f);
 		BAREME_PAR_ANNEE.put(2011, 5964, 11896, 0.055f);
 		BAREME_PAR_ANNEE.put(2011, 11897, 26420, 0.14f);
@@ -97,13 +97,13 @@ public class ImpotsCalculator {
 	}
 
 	/**
-	 * Construit le barÃªme des impÃ´ts de l'annÃ©e 2012
+	 * Construit le barême des impôts de l'année 2012
 	 */
 	public static void fillAnnee2012() {
-		// On supprime l'annÃ©e 2012
+		// On supprime l'année 2012
 		clearBaremeParAnnee(2012);
 
-		// On insÃ¨re l'annÃ©e 2012
+		// On insère l'année 2012
 		BAREME_PAR_ANNEE.put(2012, 0, 5963, 0f, 0f);
 		BAREME_PAR_ANNEE.put(2012, 5964, 11896, 0.055f, 327.97f);
 		BAREME_PAR_ANNEE.put(2012, 11897, 26420, 0.14f, 1339.13f);
@@ -113,16 +113,31 @@ public class ImpotsCalculator {
 	}
 
 	/**
-	 * Construit le barÃªme de l'annÃ©e annee aprÃ¨s l'avoir supprimÃ© de la map
+	 * Construit le barême des impôts de l'année 2015 pour l'année écoulée de 2014
+	 */
+	public static void fillAnnee2015() {
+		// On supprime l'année 2015
+		clearBaremeParAnnee(2015);
+
+		// On insère l'année 2015
+		BAREME_PAR_ANNEE.put(2015, 0, 9690, 0f, 0f);
+		BAREME_PAR_ANNEE.put(2015, 9691, 26764, 0.14f, 1339.13f);
+		BAREME_PAR_ANNEE.put(2015, 26765, 71754, 0.3f, 5566.33f);
+		BAREME_PAR_ANNEE.put(2015, 71755, 151956, 0.41f, 13357.63f);
+		BAREME_PAR_ANNEE.put(2015, 151957, Integer.MAX_VALUE, 0.45f, 19357.63f);
+	}
+
+	/**
+	 * Construit le barême de l'année annee après l'avoir supprimé de la map
 	 * 
 	 * @param annee
 	 * @param bareme
 	 */
 	public static void fillAnnee(final int annee, final MultiKeyMap bareme) {
-		// On supprime l'annÃ©e annee
+		// On supprime l'année annee
 		clearBaremeParAnnee(annee);
 
-		// On insÃ¨re l'annÃ©e annee
+		// On insère l'année annee
 		BAREME_PAR_ANNEE.put(annee, bareme);
 	}
 
@@ -137,10 +152,10 @@ public class ImpotsCalculator {
 	 */
 	public static float getImpotsValue(final int annee, final float revenu, final float partFiscale,
 					final MultiKeyMap bareme) {
-		if (annee < 2008 || annee > 2012) {
+		if (annee < 2008) {
 			if (bareme == null) {
-				throw new RuntimeException("Le barÃªme pour l'annÃ©e " + annee
-								+ " doit Ãªtre fourni car non gÃ©rÃ© par dÃ©faut");
+				throw new RuntimeException("Le barême pour l'année " + annee
+								+ " doit être fourni car non géré par défaut");
 			}
 			fillAnnee(annee, bareme);
 		} else if (annee == 2008) {
@@ -155,16 +170,17 @@ public class ImpotsCalculator {
 			fillAnnee2012();
 		}
 
-		// RÃ©cupÃ©rer le barÃªme
+		// Récupérer le barême
 		final MultiKeyMap baremeAnnee = getBaremeParAnnee(annee);
 
-		// RÃ©cupÃ©rer le quotient familial
+		// Récupérer le quotient familial
 		// float charge = 0.803575f;
 		// charge = 0.78f;
 		final float revenuNetImp = revenu;
 		final float quotientFam = round(revenuNetImp / partFiscale, 2);
 
 		Float impot = calculImpots2(quotientFam, baremeAnnee, partFiscale);
+		impot = null;
 		if (impot == null) {
 			impot = calculImpots1(quotientFam, baremeAnnee, partFiscale);
 		}
@@ -227,7 +243,7 @@ public class ImpotsCalculator {
 	}
 
 	/**
-	 * Arrondit value Ã  nbPts chiffres aprÃ¨s la virgule
+	 * Arrondit value à nbPts chiffres après la virgule
 	 * 
 	 * @param value
 	 * @param nbPts
@@ -240,7 +256,7 @@ public class ImpotsCalculator {
 	}
 
 	/**
-	 * Ajoute les deux flaot f1 et f2 donnÃ©s en paramÃ¨tre en utilisant BigDecimal afin d'Ã©viter le problÃ¨me connu de
+	 * Ajoute les deux flaot f1 et f2 donnés en paramètre en utilisant BigDecimal afin d'éviter le problème connu de
 	 * Java dans les additions de float et double
 	 * 
 	 * @param f1
@@ -254,8 +270,8 @@ public class ImpotsCalculator {
 	}
 
 	/**
-	 * Retourne null si aucun barÃªme pour l'annÃ©e anne n'est dÃ©fini. Retourne le barÃªme correspondant si l'annÃ©e est
-	 * dÃ©finie
+	 * Retourne null si aucun barême pour l'année anne n'est défini. Retourne le barême correspondant si l'année est
+	 * définie
 	 * 
 	 * @param annee
 	 * @return MultiKeyMap
@@ -285,7 +301,7 @@ public class ImpotsCalculator {
 	}
 
 	/**
-	 * Retourne l'ensemble des tranches du barÃªme des impÃ´ts donnÃ© en paramÃ¨tre
+	 * Retourne l'ensemble des tranches du barême des impôts donné en paramètre
 	 * 
 	 * @param bareme
 	 * @param quotientFamilial
@@ -317,13 +333,13 @@ public class ImpotsCalculator {
 	}
 
 	public static void main(final String[] args) {
-		final int annee = 2012;
-		final float revenu = 62990f;
-		final float part = 2f;
+		final int annee = 2015;
+		final float revenu = 36743f;
+		final float part = 1f;
 		// part=2f->6223.58 / part=2.5f->4751.725(1 ou 2 enf) / part=3f->4082.0703 (3enf)
 		// part=3.5f->3412.43 (4enf) / part=4f->2742.76 (5enf) / part=4.5f->2073.105 (6enf)
 		final float impot = getImpotsValue(annee, revenu, part, null);
-		System.out.println("ImpÃ´t de l'annÃ©e " + annee + " pour le revenu " + revenu + " avec quotiont familial "
+		System.out.println("Impôt de l'année " + annee + " pour le revenu " + revenu + " avec quotiont familial "
 						+ part + " est de : " + impot);
 	}
 }
